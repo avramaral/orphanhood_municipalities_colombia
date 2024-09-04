@@ -17,12 +17,11 @@ model {
 "
 
 file  <- write_stan_file(stan_code, dir = "test/", basename = "test_model")
-model <- cmdstan_model(file)
+model <- cmdstan_model(file, )
 
 N <- 10
 y <- rnorm(N, mean = 0, sd = 1)
 data <- list(N = N, y = y)
 
 # Fit the model
-fit <- model$sample(data = data)
-saveRDS(object = fit, file = "test/fitted_model.RDS")
+model$save_object(file = "test/fitted_model.RDS")
