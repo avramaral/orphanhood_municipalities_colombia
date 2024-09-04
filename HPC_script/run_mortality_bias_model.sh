@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -l walltime=48:00:00
-#PBS -l select=1:ncpus=4:ompthreads=4:mem=4gb
+#PBS -l select=1:ncpus=8:ompthreads=8:mem=40gb
 
 REPO_PATH="/rds/general/user/aribeir2/home/orphanhood"
 
