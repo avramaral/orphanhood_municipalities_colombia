@@ -1,0 +1,6 @@
+This is cmdstanr version 0.8.1
+- CmdStanR documentation and vignettes: mc-stan.org/cmdstanr
+- CmdStan path: /rds/general/user/aribeir2/home/anaconda3/envs/STANEnv/bin/cmdstan
+- CmdStan version: 2.35.0
+stan/lib/stan_math/make/compiler_flags:145: "Stan cannot detect if your compiler has the C++17 standard. If it does, please set STAN_HAS_CXX17=true in your make/local file. C++17 support is mandatory in the next release of Stan. Defaulting to C++14"
+

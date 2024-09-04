@@ -1,6 +1,3 @@
-wd <- "/rds/general/user/aribeir2/home/orphanhood/"
-setwd(wd)
-
 library("cmdstanr")
 
 stan_code <- "
@@ -16,7 +13,7 @@ model {
 }
 "
 
-file  <- write_stan_file(stan_code, dir = "test/", basename = "test_model")
+file  <- write_stan_file(stan_code, dir = "TEST/", basename = "test_model")
 model <- cmdstan_model(file)
 
 N <- 10
