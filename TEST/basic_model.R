@@ -1,6 +1,3 @@
-# wd <- "/rds/general/user/aribeir2/home/orphanhood"
-# setwd(wd)
-
 library("cmdstanr")
 
 stan_code <- "
@@ -16,7 +13,7 @@ model {
 }
 "
 
-file  <- write_stan_file(stan_code, dir = "test/", basename = "test_model")
+file  <- write_stan_file(stan_code, dir = "TESaT/", basename = "test_model")
 model <- cmdstan_model(file)
 
 N <- 10
@@ -25,4 +22,5 @@ data <- list(N = N, y = y)
 
 # Fit the model
 fit <- model$sample(data = data, seed = 1)
-fit$save_object(file = "test/fitted_model.RDS")
+fit$save_object(file = "TEST/fitted_model.RDS")
+cat("Fitted model was successfully saved.")

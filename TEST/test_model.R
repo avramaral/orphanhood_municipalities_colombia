@@ -25,4 +25,4 @@ data <- list(N = N, y = y)
 
 # Fit the model
 fit <- model$sample(data = data, seed = 1)
-fit$save_object(file = "test/fitted_model.RDS")
+fit$save_object(file = "TEST/fitted_model.RDS")
