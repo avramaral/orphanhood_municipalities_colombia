@@ -1,4 +1,4 @@
-wd <- "/rds/general/user/aribeir2/home/orphanhood/mortality_bias/"
+wd <- "/rds/general/user/aribeir2/home/orphanhood/"
 setwd(wd)
 
 library("cmdstanr")
