@@ -1,0 +1,28 @@
+wd <- "/rds/general/user/aribeir2/home/orphanhood/mortality_bias/"
+setwd(wd)
+
+library("cmdstanr")
+
+stan_code <- "
+data {
+  int<lower=0> N;
+  array[N] real y;
+}
+parameters {
+  real mu;
+}
+model {
+  y ~ normal(mu, 1);
+}
+"
+
+file  <- write_stan_file(stan_code, dir = "test/", basename = "test_model")
+model <- cmdstan_model(file)
+
+N <- 10
+y <- rnorm(N, mean = 0, sd = 1)
+data <- list(N = N, y = y)
+
+# Fit the model
+fit <- model$sample(data = data)
+saveRDS(object = fit, file = "test/fitted_model.RDS")
