@@ -84,4 +84,4 @@ fitted_model <- m$sample(data = data_list,
                          iter_warmup = 1000,   # Number of warm up iterations
                          iter_sampling = 2000) # Number of sampling iterations
                         
-fitted_model$save_object(file = "TEST/fitted_model.RDS")
+fitted_model$save_object(file = "fitted_model.RDS")

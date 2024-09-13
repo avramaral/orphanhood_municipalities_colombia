@@ -32,7 +32,6 @@ data {
   array[L] real mpi;        // MPI values for each municipality (for GP)
 }
 
-
 transformed data {
   matrix[L, Y] nu; // Standardised death rate for all years and locations
     
@@ -91,7 +90,7 @@ transformed parameters {
   // Linear predictor for standardised death rates (Municipality level)
   for (l in 1:L) {
     for (y in 1:Y) {
-      mu_nu[l, y] = exp(alpha_0 + f_mpi[l]);
+      mu_nu[l, y] = alpha_0 + f_mpi[l];
     }
   }
   
@@ -172,7 +171,7 @@ model {
   // Lognormal model (Municipality level)
   for (l in 1:L) {
     for (y in 1:Y) {
-      nu[l, y] ~ lognormal(log(mu_nu[l, y]), sigma_nu);
+      nu[l, y] ~ lognormal(mu_nu[l, y], sigma_nu);
     }
   }
 }

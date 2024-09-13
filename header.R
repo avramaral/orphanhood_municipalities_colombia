@@ -1,2 +1,5 @@
 suppressMessages(library("tidyverse"))
+suppressMessages(library("reshape2"))
 suppressMessages(library("cmdstanr"))
+suppressMessages(library("posterior"))
+suppressMessages(library("bayesplot"))
