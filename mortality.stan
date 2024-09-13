@@ -17,8 +17,8 @@ data {
   
   // OTHERS
   array[A] int age_value; // Age group values (for GP)
-  vector<lower=0, upper=100>[L] mpi;         // MPI in all municipalities
-  vector<lower=0, upper=100>[C] mpi_capital; // MPI in the capitals
+  vector<lower=0, upper=1>[L] mpi;         // MPI in all municipalities
+  vector<lower=0, upper=1>[C] mpi_capital; // MPI in the capitals
 }
 
 parameters {

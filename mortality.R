@@ -1,5 +1,4 @@
 source("header.R")
-source("aux.R")
 
 range_0_1 <- function (x, ...) { (x - min(x)) / (max(x) - min(x)) }
 
@@ -18,7 +17,7 @@ p_nat       <- pop_2018 %>% group_by(gender, age) %>% summarise(p_nat = sum(popu
 p_nat_mat   <- acast(p_nat, age ~ gender, value.var = "p_nat") # (A x G)
 p_nat_total <- sum(pop_2018$population)
 
-mpi <- mort %>% filter(year == 1998, gender == "Female", age == "10-14")
+mpi <- mort %>% filter(year == 1998, gender == "Female", age == "10-14") %>% mutate(mpi = mpi / 100) # Between 0 and 1
 mpi <- mpi  %>% left_join(y = geo_info[, c("mun", "capital")], by = "mun") %>% dplyr::select(mpi, capital)
 mpi_capital <- mpi %>% filter(capital == 1) %>% dplyr::select(mpi) %>% c() %>% unlist() %>% unname()
 mpi <- mpi %>% dplyr::select(mpi) %>% c() %>% unlist() %>% unname()
@@ -87,13 +86,4 @@ fitted_model <- m$sample(data = data_list,
                          iter_warmup = 2000,   # Number of warm up iterations
                          iter_sampling = 2000) # Number of sampling iterations
 
-fitted_model$save_object(file = "fitted_model_mortality.RDS")
-
-# # Analyze fitted model
-# d <- fitted_model$draws()
-# d <- d %>% as_draws_df()
-# mcmc_trace(d, pars = vars(length_scale_f_nat_fem, length_scale_f_nat_mal))
-#
-# d_df <- d %>% as_draws_df()
-# d_df$sigma_f_nat %>% hist(main = "sigma_f")
-# d_df$length_scale_f_nat %>% hist(main = "lenght_scale_f")
+fitted_model$save_object(file = "FITTED/fitted_model_mortality.RDS")

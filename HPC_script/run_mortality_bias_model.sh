@@ -8,4 +8,4 @@ module load anaconda3/personal
 source activate STANEnv
 
 cd $REPO_PATH
-Rscript mortality_bias_stan.R
+Rscript mortality.R
