@@ -1,19 +1,5 @@
 source("header.R")
 
-range_0_1 <- function (x, ...) { (x - min(x)) / (max(x) - min(x)) }
-
-data <- readRDS(file = "DATA/mortality_bias_data.RDS")
-
-mort      <- data$mort
-geo_info  <- data$geo_info
-colombia  <- data$colombia
-
-# National mortality
-nat_mort <- mort %>% dplyr::select(year, mun, gender, age, deaths, population) %>% group_by(year, gender, age) %>% summarise(deaths = sum(deaths), population = sum(population))
-
-source("header.R")
-source("aux.R")
-
 data <- readRDS(file = "DATA/mortality_bias_data.RDS")
 
 mort      <- data$mort
