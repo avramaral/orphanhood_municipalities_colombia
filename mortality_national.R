@@ -43,10 +43,10 @@ data_list <- list(
 
 # Fit the model
 fitted_model <- m$sample(data = data_list,
-                         seed = 999,           # Set seed for reproducibility
+                         seed = 1,             # Set seed for reproducibility
                          chains = 2,           # Number of Markov chains
                          parallel_chains = 2,  # Number of parallel chains
-                         iter_warmup = 1000,   # Number of warm up iterations
+                         iter_warmup = 2000,   # Number of warm up iterations
                          iter_sampling = 2000) # Number of sampling iterations
 
 fitted_model$save_object(file = "FITTED/fitted_national_model.RDS")
