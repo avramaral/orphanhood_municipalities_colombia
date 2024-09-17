@@ -1,5 +1,7 @@
 source("header.R")
 
+range_0_1 <- function (x, ...) { (x - min(x)) / (max(x) - min(x)) }
+
 data <- readRDS(file = "DATA/mortality_bias_data.RDS")
 
 mort      <- data$mort
@@ -13,7 +15,7 @@ nat_mort <- mort %>% dplyr::select(year, mun, gender, age, deaths, population) %
 # Stan model
 ##############################
 
-p <- "new_mortality_bias.stan"
+p <- "mortality_national.stan"
 m <- cmdstan_model(p)
 
 # Construct `data_list`
@@ -42,9 +44,9 @@ data_list <- list(
 # Fit the model
 fitted_model <- m$sample(data = data_list,
                          seed = 999,           # Set seed for reproducibility
-                         chains = 4,           # Number of Markov chains
-                         parallel_chains = 4,  # Number of parallel chains
+                         chains = 2,           # Number of Markov chains
+                         parallel_chains = 2,  # Number of parallel chains
                          iter_warmup = 1000,   # Number of warm up iterations
-                         iter_sampling = 3000) # Number of sampling iterations
+                         iter_sampling = 2000) # Number of sampling iterations
 
 fitted_model$save_object(file = "FITTED/fitted_national_model.RDS")
