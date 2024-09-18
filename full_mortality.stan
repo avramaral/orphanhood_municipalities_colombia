@@ -110,7 +110,7 @@ generated quantities {
   array[Y] matrix[L, A] mu_municipality_mal;
   
   for (y in 1:Y) {
-    mu_municipality_fem[y] =  gamma_mult[, y] * mu_nat[1][y, ]; // Female first
-    mu_municipality_mal[y] =  gamma_mult[, y] * mu_nat[2][y, ];
+    mu_municipality_fem[y] =  gamma_mult[, y] * inv_logit(mu_nat[1][y, ]); // Female first
+    mu_municipality_mal[y] =  gamma_mult[, y] * inv_logit(mu_nat[2][y, ]);
   }
 }
