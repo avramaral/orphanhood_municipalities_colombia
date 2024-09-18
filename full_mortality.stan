@@ -31,13 +31,13 @@ parameters {
   vector[Y] alpha_1; // MPI coefficient (linear regression for the capitals)
   real<lower=0> sigma_a; // Should it vary (or be commonly defined) across the years?
   
+  matrix<lower=0>[L, Y] std_death_rate; // Array of standardized death rates for prediction, given the coefficients from the capitals 
+  
   // Hyperparameters for the GP (National level)
   real<lower=0> sigma_f_nat_fem;        
   real<lower=0> sigma_f_nat_mal;        
   real<lower=0> length_scale_f_nat_fem; 
   real<lower=0> length_scale_f_nat_mal; 
-  
-  matrix<lower=0>[L, Y] std_death_rate; // Array of standardized death rates for prediction, given the coefficients from the capitals 
 }
 
 transformed parameters {
@@ -58,25 +58,23 @@ transformed parameters {
     }
   }
   
-  // Intermediate quantities that are not required to be saved
-  {
-    // Standardised death rate for the country
-    for (y in 1:Y) {
-      std_death_rate_national[y] = 0; // Initialize the sum to zero
-      // Vectorized sum for age group (it is difficult to vectorize if for gender due to how `mu_nat` was constucted, but the performance should not be affected) 
-      for (g in 1:G) {
-        std_death_rate_national[y] = std_death_rate_national[y] + dot_product(p_nat[, g], inv_logit(mu_nat[g][y, ])); // Convert (1 x 1) matrix into real 
-      }
-      std_death_rate_national[y] = std_death_rate_national[y] / p_nat_total;
+  // Standardised death rate for the country
+  for (y in 1:Y) {
+    std_death_rate_national[y] = 0; // Initialize the sum to zero
+    // Vectorized sum for age group (it is difficult to vectorize if for gender due to how `mu_nat` was constucted, but the performance should not be affected) 
+    for (g in 1:G) {
+      std_death_rate_national[y] = std_death_rate_national[y] + dot_product(p_nat[, g], inv_logit(mu_nat[g][y, ])); // Convert (1 x 1) matrix into real 
     }
-    
-    // Multiplier factor 
-    gamma_mult = std_death_rate ./ rep_matrix(std_death_rate_national', L);
+    std_death_rate_national[y] = std_death_rate_national[y] / p_nat_total;
   }
+  
+  // Multiplier factor 
+  gamma_mult = std_death_rate ./ rep_matrix(std_death_rate_national', L);
+  
 }
 
 model {
-  // Priors
+ // Priors
   beta_0 ~ normal(0, 3);
   beta_1 ~ normal(0, 3);
   
@@ -91,16 +89,9 @@ model {
     
     // Standardised death rates for the capitals
     std_death_rate_capital[, y] ~ normal(alpha_0[y] + alpha_1[y] * mpi_capital, sigma_a); // Observational model
+    std_death_rate[, y] ~ normal(alpha_0[y] + alpha_1[y] * mpi, sigma_a);                 // Prediction model
   }
   
-  // Intermediate quantities that are not required to be saved
-  {
-    for (y in 1:Y) {
-      // Standardised death rates for all municipalities
-      std_death_rate[, y] ~ normal(alpha_0[y] + alpha_1[y] * mpi, sigma_a); // Prediction model
-    }
-  }
-
   // Priors for hyperparameters
   sigma_f_nat_fem ~ normal(0, 1);
   sigma_f_nat_mal ~ normal(0, 1);
@@ -119,7 +110,7 @@ generated quantities {
   array[Y] matrix[L, A] mu_municipality_mal;
   
   for (y in 1:Y) {
-    mu_municipality_fem[y] = gamma_mult[, y] * inv_logit(mu_nat[1][y, ]); // Female first
-    mu_municipality_mal[y] = gamma_mult[, y] * inv_logit(mu_nat[2][y, ]);
+    mu_municipality_fem[y] =  gamma_mult[, y] * mu_nat[1][y, ]; // Female first
+    mu_municipality_mal[y] =  gamma_mult[, y] * mu_nat[2][y, ];
   }
 }

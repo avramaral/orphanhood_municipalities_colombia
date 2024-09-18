@@ -40,7 +40,7 @@ std_death_rate_capital_mat <- acast(std_death_rate_capital, mun ~ year, value.va
 # Stan model
 ##############################
 
-p <- "mortality.stan"
+p <- "full_mortality.stan"
 m <- cmdstan_model(p)
 
 # Construct `data_list`
@@ -88,7 +88,7 @@ fitted_model <- m$sample(data = data_list,
                          thin = 4)             # Thinning (period between saved samples) to save memory
 
 d <- fitted_model$draws(variables = c("mu_municipality_fem", "mu_municipality_mal"), inc_warmup = FALSE, format = "draws_list")
-saveRDS(object = d, file = "FITTED/mu_municipality.RDS")
+saveRDS(object = d, file = "FITTED/full_mu_municipality.RDS")
 
-fitted_model$save_object(file = "FITTED/fitted_model_mortality.RDS")
+fitted_model$save_object(file = "FITTED/full_fitted_model_mortality.RDS")
 
