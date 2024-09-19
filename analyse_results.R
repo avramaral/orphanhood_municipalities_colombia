@@ -6,4 +6,12 @@ mort      <- data$mort
 geo_info  <- data$geo_info
 colombia  <- data$colombia
 
-fitted_model <- readRDS(file = "FITTED/fitted_model_mortality.RDS")
+processed_d_filed <- "FITTED/mu_municipality_processed.RDS"
+if (!file.exists(processed_d_filed)) {
+  d <- readRDS(file = "FITTED/full_mu_municipality_corrected.RDS")
+  processed_d <- summarise_draws(d)
+  saveRDS(object = processed_d, file = processed_d_filed)
+} else {
+  processed_d <- readRDS(file = processed_d_filed)
+}
+
