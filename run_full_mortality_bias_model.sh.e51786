@@ -1,0 +1,333 @@
+`summarise()` has grouped output by 'year', 'gender'. You can override using
+the `.groups` argument.
+`summarise()` has grouped output by 'gender'. You can override using the
+`.groups` argument.
+`summarise()` has grouped output by 'mun'. You can override using the `.groups`
+argument.
+stan/lib/stan_math/make/compiler_flags:145: "Stan cannot detect if your compiler has the C++17 standard. If it does, please set STAN_HAS_CXX17=true in your make/local file. C++17 support is mandatory in the next release of Stan. Defaulting to C++14"
+
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: cholesky_decompose: Matrix m is not positive definite (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 52, column 4 to column 63)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: cholesky_decompose: Matrix m is not positive definite (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 52, column 4 to column 63)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: cholesky_decompose: Matrix m is not positive definite (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 52, column 4 to column 63)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 1 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 1 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 1 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 1 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 1 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 2 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 2 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 51, column 4 to column 135)
+Chain 2 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 2 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 2 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 3 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 3 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 3 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 3 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 3 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: gp_exp_quad_cov: sigma is 0, but must be positive! (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 50, column 4 to column 135)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Chain 4 Informational Message: The current Metropolis proposal is about to be rejected because of the following issue:
+Chain 4 Exception: cholesky_decompose: Matrix m is not positive definite (in '/var/tmp/pbs.51786.pbs/RtmpAQxkos/model-27fdd81e4ae599.stan', line 53, column 4 to column 63)
+Chain 4 If this warning occurs sporadically, such as for highly constrained variable types like covariance matrices, then the sampler is fine,
+Chain 4 but if this warning occurs often then your model may be either severely ill-conditioned or misspecified.
+Chain 4 
+Warning: 106 of 4000 (3.0%) transitions ended with a divergence.
+See https://mc-stan.org/misc/warnings for details.
+
+Warning: 3894 of 4000 (97.0%) transitions hit the maximum treedepth limit of 10.
+See https://mc-stan.org/misc/warnings for details.
+
+Warning: 4 of 4 chains had an E-BFMI less than 0.3.
+See https://mc-stan.org/misc/warnings for details.
+
+=>> PBS: job killed: mem 170960472kb exceeded limit 104857600kb
