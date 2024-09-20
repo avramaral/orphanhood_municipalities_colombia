@@ -1,3 +1,3 @@
-# Orphanhood modeling
+# Orphanhood modelling
 
-Modeling orphanhood levels in Colombia, based on mortality and fertility data.
+Modelling orphanhood levels in Colombia, based on mortality and fertility data.
