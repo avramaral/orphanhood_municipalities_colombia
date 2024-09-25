@@ -10,6 +10,9 @@ pop_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, 
 lls <- pop$mun %>% unique() %>% as.character() %>% as.numeric()
 aas <- pop$age %>% unique() 
 yys <- pop$year %>% unique()
+# Deaths per gender (L x Y x A)
+dth_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, deaths) %>% acast(mun ~ year ~ age, value.var = "deaths")
+dth_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, deaths) %>% acast(mun ~ year ~ age, value.var = "deaths")
 
 p <- "mortality_v1.stan"
 d <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
@@ -49,14 +52,15 @@ if (!file.exists(multiplier_file)) {
       tmp_log_std_mun <- log(tmp_alpha_0 + tmp_alpha_1 * tmp_mpi_mun)
       tmp_log_std_nat <- log(c(draws[, paste("std_death_rate_nat[", y, "]", sep = "")]))
       tmp_mul <- tmp_log_std_mun - tmp_log_std_nat
-      tmp_mul <- pmax(tmp_mul, 1) # Alternatively, I could check the final number of deaths
+      tmp_mul <- pmax(tmp_mul, 1e-12) # Prevent negative values (check it)
+      # tmp_mul <- pmax(tmp_mul, 1)   # Alternatively, I could check the final number of deaths
       
       multiplier[l, y, ] <- tmp_mul
     }
     setTxtProgressBar(pb, l)
   }
   close(pb)
-  saveRDS(object = multiplier, file = multiplier_file)
+  # saveRDS(object = multiplier, file = multiplier_file)
 } else {
   multiplier <- readRDS(file = multiplier_file)
 }
@@ -79,10 +83,18 @@ for (l in 1:L) {
       tmp_death_rate_nat_fem <- c(draws[, paste("inv_logit_death_rate_nat[1,", y, ",", a, "]", sep = "")])
       tmp_death_rate_nat_mal <- c(draws[, paste("inv_logit_death_rate_nat[2,", y, ",", a, "]", sep = "")])
       
-      log_death_rate_fem[y, a, ] <- multiplier[l, y, ] + log(inv_logit(tmp_death_rate_nat_fem))
-      log_death_rate_mal[y, a, ] <- multiplier[l, y, ] + log(inv_logit(tmp_death_rate_nat_mal))
-      deaths_fem[y, a, ] <- exp(log(pop_fem[l, y, a]) + log_death_rate_fem[y, a, ])
-      deaths_mal[y, a, ] <- exp(log(pop_mal[l, y, a]) + log_death_rate_mal[y, a, ])
+      log_death_rate_fem[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_fem))
+      log_death_rate_mal[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_mal))
+      
+      tmp_deaths_fem <- exp(log(pop_fem[l, y, a]) + log_death_rate_fem[y, a, ])
+      tmp_deaths_mal <- exp(log(pop_mal[l, y, a]) + log_death_rate_mal[y, a, ])
+      
+      # Number of fitted deaths is greater or equal to the raw deaths
+      deaths_fem[y, a, ] <- pmax(dth_fem[l, y, a], tmp_deaths_fem)
+      deaths_mal[y, a, ] <- pmax(dth_mal[l, y, a], tmp_deaths_mal)
+      
+      # deaths_fem[y, a, ] <- exp(log(pop_fem[l, y, a]) + log_death_rate_fem[y, a, ])
+      # deaths_mal[y, a, ] <- exp(log(pop_mal[l, y, a]) + log_death_rate_mal[y, a, ])
     }
   }
   
