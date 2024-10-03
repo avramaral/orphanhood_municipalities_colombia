@@ -9,7 +9,7 @@ fert      <- data$fert # To make age groups for female and male comparable, we i
 geo_info  <- data$geo_info
 colombia  <- data$colombia
 
-# National mortality
+# National fertility
 nat_fert <- fert %>% dplyr::select(year, mun, gender, age, births, population) %>% group_by(year, gender, age) %>% summarise(births = sum(births), population = sum(population))
 
 # Aggregated population based on the census year (i.e., 2018)
