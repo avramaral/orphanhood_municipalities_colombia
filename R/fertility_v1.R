@@ -38,6 +38,8 @@ std_fertility_rate_capital_mat <- acast(std_fertility_rate_capital, mun ~ year, 
 # E.g., in 2018
 # ggplot(data = data.frame(mpi = mpi_capital * 100, std_fertility_rate = std_fertility_rate_capital_mat[, "2018"]), mapping = aes(x = mpi, y = std_fertility_rate)) + geom_point() + geom_smooth(method = "lm") + labs(x = "MPI", y = "Standardised fertility rate") + scale_x_continuous(limits = c(0, 100)) + theme_bw()
 
+fitted_lm <- lm(c(std_fertility_rate_capital_mat[, 1]) ~ 1 + mpi_capital) # year = 2018
+summary(fitted_lm)
 ##############################
 # Stan model
 ##############################

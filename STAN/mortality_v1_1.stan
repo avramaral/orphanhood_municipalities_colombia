@@ -79,7 +79,7 @@ model {
   target += normal_lpdf(to_vector(std_death_rate_capital) | to_vector(std_death_rate_capital_mean), std_death_rate_capital_sigma);
   
   // Priors (Municipality level)
-  target += normal_lpdf(alpha_0 | 0, 0.0025);
+  target += normal_lpdf(alpha_0 | 0, 0.25); # before 0.0025
   target += normal_lpdf(alpha_1 | 0, 1);
   target += normal_lpdf(std_death_rate_capital_sigma | 0, 0.0025);
 }

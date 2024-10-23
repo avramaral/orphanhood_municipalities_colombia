@@ -38,6 +38,9 @@ std_death_rate_capital_mat <- acast(std_death_rate_capital, mun ~ year, value.va
 # E.g., in 2018
 # ggplot(data = data.frame(mpi = mpi_capital * 100, std_death_rate = std_death_rate_capital_mat[, "2018"]), mapping = aes(x = mpi, y = std_death_rate)) + geom_point() + geom_smooth(method = "lm") + labs(x = "MPI", y = "Standardised death rate") + scale_x_continuous(limits = c(0, 100)) + theme_bw()
 
+fitted_lm <- lm(c(std_fertility_rate_capital_mat[, 21]) ~ 1 + mpi_capital) # year = 2018
+summary(fitted_lm)
+
 ##############################
 # Stan model
 ##############################
