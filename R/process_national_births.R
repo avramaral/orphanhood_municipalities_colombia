@@ -30,7 +30,6 @@ C = data$C
 mpi_municip <- data$mpi_municip
 sample_size <- nrow(draws[, 1])
 
-
 # `gender`, `year`, and `age group`
 
 fit_birth_rate_nat_fem <- array(data = 0, dim = c(Y, A, sample_size))
@@ -106,7 +105,7 @@ p_fem <- ggplot(female_data, aes(x = Births, y = Mean, color = as.factor(Year)))
   geom_point(size = 0.5) +
   geom_errorbar(aes(ymin = Q025, ymax = Q975), width = 1e3) +
   geom_abline(slope = 1, intercept = 0, colour = "#00000033", linetype = "solid") +
-  labs(title = "Female", x = "Empirical deaths", y = "Fitted deaths", color = "Year") +
+  labs(title = "Female", x = "Empirical births", y = "Fitted deaths", color = "Year") +
   theme_bw() +
   scale_x_continuous(labels = comma) + 
   scale_y_continuous(labels = comma) + 

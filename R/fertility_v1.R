@@ -40,6 +40,7 @@ std_fertility_rate_capital_mat <- acast(std_fertility_rate_capital, mun ~ year, 
 
 fitted_lm <- lm(c(std_fertility_rate_capital_mat[, 1]) ~ 1 + mpi_capital) # year = 2018
 summary(fitted_lm)
+
 ##############################
 # Stan model
 ##############################

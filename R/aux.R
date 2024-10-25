@@ -106,6 +106,30 @@ compute_national_std_rate_age_gender <- function (data, ...) {
   std_rate
 }
 
+adj_mort_data <- function (mort, prop_fem, prop_mal, ...) {
+  
+  valid_ages_fem <- c("10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69")
+  valid_ages_mal <- c("10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79")
+  
+  mort <- mort %>% filter(((gender == "Female") & (age %in% valid_ages_fem)) | ((gender == "Male") & (age %in% valid_ages_mal)))
+  mort <- mort %>% left_join(y = prop_fem, by = "mun") %>% left_join(y = prop_mal, by = "mun")
+  mort <- mort %>% mutate(deaths = ifelse((gender == "Female") & (age == "65-69"), deaths * prop_65_66_fem, deaths)) %>% mutate(population = ifelse((gender == "Female") & (age == "65-69"), population * prop_65_66_fem, population))
+  mort <- mort %>% mutate(deaths = ifelse((gender ==   "Male") & (age == "75-79"), deaths * prop_75_76_mal, deaths)) %>% mutate(population = ifelse((gender ==   "Male") & (age == "75-79"), population * prop_75_76_mal, population))
+  mort <- mort %>% dplyr::select(-c(prop_65_66_fem, prop_75_76_mal))
+  mort <- mort %>% mutate(death_rate = compute_rate(count = deaths, pop = population))
+  mort <- mort %>% mutate(age = ifelse((gender == "Female") & (age == "65-69"), "65-66", age))
+  mort <- mort %>% mutate(age = ifelse((gender ==   "Male") & (age == "75-79"), "75-76", age))
+  
+  mort
+}
+
+adj_fert_data <- function (fert, ...) {
+  fert <- fert %>% filter(!(gender == "Female" & (age %in% c("50-54", "55-59")))) 
+  
+  fert
+}
+
+
 plot_maps <- function (data, my_var, nm_var = "", tt = "", ll = NULL, my_colors = NA, ...) {
   
   if (is.na(my_colors)) { my_colors <- c("#00008FFF", "#0000F2FF", "#0063FFFF", "#00D4FFFF", "#46FFB8FF", "#B8FF46FF", "#FFD400FF", "#FF6300FF", "#F00000FF", "#800000FF" )}
