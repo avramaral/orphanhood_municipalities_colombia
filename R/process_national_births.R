@@ -16,14 +16,16 @@ lls <- pop$mun  %>% unique() %>% as.character() %>% as.numeric()
 aas <- pop$age  %>% unique() 
 yys <- pop$year %>% unique()
 
-p <- "fertility_v1_2.stan"
+p <- "fertility_v2_1.stan"
 d <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
 
 data  <- d$data
 draws <- d$draws
 
 Y = data$Y
-A = data$A
+# A = data$A
+A_fem = data$A_fem
+A_mal = data$A_mal
 G = data$G
 L = data$L
 C = data$C
@@ -32,24 +34,52 @@ sample_size <- nrow(draws[, 1])
 
 # `gender`, `year`, and `age group`
 
-fit_birth_rate_nat_fem <- array(data = 0, dim = c(Y, A, sample_size))
-fit_birth_rate_nat_mal <- array(data = 0, dim = c(Y, A, sample_size)) 
+# fit_birth_rate_nat_fem <- array(data = 0, dim = c(Y, A, sample_size))
+# fit_birth_rate_nat_mal <- array(data = 0, dim = c(Y, A, sample_size)) 
+# 
+# fit_bth_counts_nat_fem <- array(data = 0, dim = c(Y, A, sample_size))
+# fit_bth_counts_nat_mal <- array(data = 0, dim = c(Y, A, sample_size)) 
 
-fit_bth_counts_nat_fem <- array(data = 0, dim = c(Y, A, sample_size))
-fit_bth_counts_nat_mal <- array(data = 0, dim = c(Y, A, sample_size)) 
+fit_birth_rate_nat_fem <- array(data = 0, dim = c(Y, A_fem, sample_size))
+fit_birth_rate_nat_mal <- array(data = 0, dim = c(Y, A_mal, sample_size)) 
+
+fit_bth_counts_nat_fem <- array(data = 0, dim = c(Y, A_fem, sample_size))
+fit_bth_counts_nat_mal <- array(data = 0, dim = c(Y, A_mal, sample_size)) 
+
 
 for (y in 1:Y) {
   print(paste(y, " (of ", Y, ")", sep = ""))
-  for (a in 1:A) {
-    tmp_phi_dispe <- c(draws[, "phi_dispe"])
-    
-    fit_birth_rate_nat_fem[y, a, ] <- exp(c(draws[, paste("inv_log_fertility_rate_nat[1,", y, ",", a, "]", sep = "")]))
-    fit_birth_rate_nat_mal[y, a, ] <- exp(c(draws[, paste("inv_log_fertility_rate_nat[2,", y, ",", a, "]", sep = "")]))
-    
-    fit_bth_counts_nat_fem[y, a, ] <- rnbinom(n = sample_size, size = tmp_phi_dispe, mu = exp(log(fit_birth_rate_nat_fem[y, a, ]) + log(pop_fem_mat[y, a])))
-    fit_bth_counts_nat_mal[y, a, ] <- rnbinom(n = sample_size, size = tmp_phi_dispe, mu = exp(log(fit_birth_rate_nat_mal[y, a, ]) + log(pop_mal_mat[y, a])))
+  for (a in 1:A_fem) {
+    tmp_phi_fem <- c(draws[, paste("phi_dispe[1]", sep = "")])
+    fit_birth_rate_nat_fem[y, a, ] <- exp(c(draws[, paste("inv_log_fertility_rate_nat_fem[", y, ",", a, "]", sep = "")]))
+    fit_bth_counts_nat_fem[y, a, ] <- rnbinom(n = sample_size, size = tmp_phi_fem, mu = exp(log(fit_birth_rate_nat_fem[y, a, ]) + log(pop_fem_mat[y, a])))
+  }
+  for (a in 1:A_mal) {
+    tmp_phi_mal <- c(draws[, paste("phi_dispe[2]", sep = "")])
+    fit_birth_rate_nat_mal[y, a, ] <- exp(c(draws[, paste("inv_log_fertility_rate_nat_mal[", y, ",", a, "]", sep = "")]))
+    fit_bth_counts_nat_mal[y, a, ] <- rnbinom(n = sample_size, size = tmp_phi_mal, mu = exp(log(fit_birth_rate_nat_mal[y, a, ]) + log(pop_mal_mat[y, a])))
   }
 }
+
+# for (y in 1:Y) {
+#   print(paste(y, " (of ", Y, ")", sep = ""))
+#   for (a in 1:A) {
+#     # tmp_phi_dispe_fem <- c(draws[, paste("phi_dispe_year_fem[", y, "]", sep = "")])
+#     # tmp_phi_dispe_mal <- c(draws[, paste("phi_dispe_year_mal[", y, "]", sep = "")])
+#     
+#     tmp_phi_fem <- c(draws[, paste("phi_dispe_fem[1]", sep = "")])
+#     tmp_phi_mal <- c(draws[, paste("phi_dispe_mal[2]", sep = "")])
+#     
+#     fit_birth_rate_nat_fem[y, a, ] <- exp(c(draws[, paste("inv_log_fertility_rate_nat[1,", y, ",", a, "]", sep = "")]))
+#     fit_birth_rate_nat_mal[y, a, ] <- exp(c(draws[, paste("inv_log_fertility_rate_nat[2,", y, ",", a, "]", sep = "")]))
+#     
+#     fit_bth_counts_nat_fem[y, a, ] <- rnbinom(n = sample_size, size = tmp_phi_fem, mu = exp(log(fit_birth_rate_nat_fem[y, a, ]) + log(pop_fem_mat[y, a])))
+#     fit_bth_counts_nat_mal[y, a, ] <- rnbinom(n = sample_size, size = tmp_phi_mal, mu = exp(log(fit_birth_rate_nat_mal[y, a, ]) + log(pop_mal_mat[y, a])))
+#   
+#     #fit_bth_counts_nat_fem[y, a, ] <- exp(log(fit_birth_rate_nat_fem[y, a, ]) + log(pop_fem_mat[y, a]))
+#     #fit_bth_counts_nat_mal[y, a, ] <- exp(log(fit_birth_rate_nat_mal[y, a, ]) + log(pop_mal_mat[y, a]))
+#   }
+# }
 
 
 fit_bth_counts_nat_fem <- apply(X = fit_bth_counts_nat_fem, MARGIN = c(1, 3), FUN = sum) # Sum over the age groups
@@ -101,7 +131,7 @@ female_data <- merged_data %>% filter(Gender == "Female") %>% dplyr::select(-Gen
   male_data <- merged_data %>% filter(Gender ==   "Male") %>% dplyr::select(-Gender)
 
 
-p_fem <- ggplot(female_data, aes(x = Births, y = Mean, color = as.factor(Year))) +
+p_fem <- ggplot(female_data, aes(x = Births, y = Median, color = as.factor(Year))) +
   geom_point(size = 0.5) +
   geom_errorbar(aes(ymin = Q025, ymax = Q975), width = 1e3) +
   geom_abline(slope = 1, intercept = 0, colour = "#00000033", linetype = "solid") +
@@ -112,7 +142,7 @@ p_fem <- ggplot(female_data, aes(x = Births, y = Mean, color = as.factor(Year)))
   # coord_fixed() +
   theme(legend.position = "none", text = element_text(size = 12, family = "LM Roman 10"))
 
-p_mal <- ggplot(  male_data, aes(x = Births, y = Mean, color = as.factor(Year))) +
+p_mal <- ggplot(  male_data, aes(x = Births, y = Median, color = as.factor(Year))) +
   geom_point(size = 0.5) +
   geom_errorbar(aes(ymin = Q025, ymax = Q975), width = 1e3) +
   geom_abline(slope = 1, intercept = 0, colour = "#00000033", linetype = "solid") +

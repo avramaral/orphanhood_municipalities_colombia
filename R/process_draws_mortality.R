@@ -4,27 +4,32 @@ source("R/aux.R")
 pop <- readRDS(file = "DATA/mortality_bias_data.RDS")
 geo_info <- pop$geo_info
 pop <- pop$mort
-# Population per gender (L x Y x A)
+pop <- pop %>% filter(!(gender == "Female" & age %in% c("60-64", "65-69", "70-74", "75-79", "80+")))
+pop <- pop %>% filter(!(gender ==   "Male" & age %in% c(                  "70-74", "75-79", "80+")))
+
+# Population per gender (L x Y x A_fem) and  (L x Y x A_mal)
 pop_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, population) %>% acast(mun ~ year ~ age, value.var = "population")
 pop_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, population) %>% acast(mun ~ year ~ age, value.var = "population")
 lls <- pop$mun %>% unique() %>% as.character() %>% as.numeric()
-aas <- pop$age %>% unique() 
+aas_fem <- pop[pop$gender == "Female", ]$age %>% unique()
+aas_mal <- pop[pop$gender ==   "Male", ]$age %>% unique() 
 yys <- pop$year %>% unique()
 # Deaths per gender (L x Y x A)
 dth_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, deaths) %>% acast(mun ~ year ~ age, value.var = "deaths")
 dth_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, deaths) %>% acast(mun ~ year ~ age, value.var = "deaths")
 
-p <- "mortality_v1_1.stan"
+p <- "mortality_v2_1.stan"
 d <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
 
 data  <- d$data
 draws <- d$draws
 
-Y = data$Y
-A = data$A
-G = data$G
-L = data$L
-C = data$C
+Y <- data$Y
+A_fem <- data$A_fem
+A_mal <- data$A_mal
+G <- data$G
+L <- data$L
+C <- data$C
 mpi_municip <- data$mpi_municip
 sample_size <- nrow(draws[, 1])
 
@@ -33,9 +38,12 @@ sample_size <- nrow(draws[, 1])
 # Aggregated population based on the census year (i.e., 2018)
 pop_2018     <- pop %>% filter(year == 2018) %>% dplyr::select(mun, gender, age, population)
 pop_2018     <- pop_2018 %>% mutate(population = ifelse(population == 0, 1, population)) 
-pop_2018_mat <- acast(pop_2018, mun ~ gender ~ age, value.var = "population") # (L X G x A)
+pop_2018_mat_fem <- acast(pop_2018[pop_2018$gender == "Female", ], mun ~ age, value.var = "population") # (L x A_fem)
+pop_2018_mat_mal <- acast(pop_2018[pop_2018$gender ==   "Male", ], mun ~ age, value.var = "population") # (L x A_mal)
 p_nat        <- pop_2018 %>% group_by(gender, age) %>% summarise(p_nat = sum(population)) %>% ungroup()
-p_nat_mat    <- acast(p_nat, gender ~ age, value.var = "p_nat") # (G x A)
+p_nat_mat_fem <- unname(unlist(c(p_nat[p_nat$gender == "Female", "p_nat"]))) # (A_fem)
+p_nat_mat_mal <- unname(unlist(c(p_nat[p_nat$gender ==   "Male", "p_nat"]))) # (A_mal)
+
 p_nat_total  <- sum(pop_2018$population)
 
 std_death_rate <- pop %>% dplyr::select(mun, year, age, gender, deaths, population, death_rate)
@@ -96,53 +104,60 @@ if (!file.exists(multiplier_file)) {
 # COMPUTE LOG-DEATH-RATE (COUNT) - ALL GENDERS 
 ##################################################
 
-pop_mun_sum <- unname(apply(X = pop_2018_mat, MARGIN = 1, FUN = sum))
-
 tmp_deaths <- list()
 tmp_dth_rt <- list()
 
 for (l in 1:L) {
   print(paste(sprintf("%04d", l), " (of ", L, ")", sep = ""))
   
-  log_death_rate_fem <- array(data = 0, dim = c(Y, A, sample_size)) 
-  log_death_rate_mal <- array(data = 0, dim = c(Y, A, sample_size))
-  deaths_fem <-  array(data = 0, dim = c(Y, A, sample_size))
-  deaths_mal <-  array(data = 0, dim = c(Y, A, sample_size))
-  dth_rt_fem <-  array(data = 0, dim = c(Y, A, sample_size))
-  dth_rt_mal <-  array(data = 0, dim = c(Y, A, sample_size))
+  log_death_rate_fem <- array(data = 0, dim = c(Y, A_fem, sample_size)) 
+  log_death_rate_mal <- array(data = 0, dim = c(Y, A_mal, sample_size))
+  deaths_fem <-  array(data = 0, dim = c(Y, A_fem, sample_size))
+  deaths_mal <-  array(data = 0, dim = c(Y, A_mal, sample_size))
+  dth_rt_fem <-  array(data = 0, dim = c(Y, A_fem, sample_size))
+  dth_rt_mal <-  array(data = 0, dim = c(Y, A_mal, sample_size))
   
   for (y in 1:Y) {
-    for (a in 1:A) {
+    for (a in 1:A_fem) {
       # Fitted national rates
-      tmp_death_rate_nat_fem <- c(draws[, paste("inv_logit_death_rate_nat[1,", y, ",", a, "]", sep = "")])
-      tmp_death_rate_nat_mal <- c(draws[, paste("inv_logit_death_rate_nat[2,", y, ",", a, "]", sep = "")])
-     
-      log_death_rate_fem[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_fem))
-      log_death_rate_mal[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_mal))
+      tmp_death_rate_nat_fem <- c(draws[, paste("inv_logit_death_rate_nat_fem[", y, ",", a, "]", sep = "")])
       
+      log_death_rate_fem[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_fem))
       prob_fem <- pmin(exp(log_death_rate_fem[y, a, ]), 1)
-      prob_mal <- pmin(exp(log_death_rate_mal[y, a, ]), 1)
       
       tmp_deaths_fem <- rbinom(n = sample_size, size = pop_fem[l, y, a], prob = prob_fem)
+      
+      ##############################
+      # Deal with impossible cases #
+      ##############################
+      # Zero population
+      if (pop_fem[l, y, a] == 0) { tmp_deaths_fem <- pmin(0, tmp_deaths_fem) }
+      # Number of deaths should be smaller or equal than the population 
+      tmp_deaths_fem <- pmin(pop_fem[l, y, a], tmp_deaths_fem)
+      ##############################
+      
+      deaths_fem[y, a, ] <- tmp_deaths_fem
+      dth_rt_fem[y, a, ] <- prob_fem
+    }
+    for (a in 1:A_mal) {
+      # Fitted national rates
+      tmp_death_rate_nat_mal <- c(draws[, paste("inv_logit_death_rate_nat_mal[", y, ",", a, "]", sep = "")])
+      
+      log_death_rate_mal[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_mal))
+      prob_mal <- pmin(exp(log_death_rate_mal[y, a, ]), 1)
+      
       tmp_deaths_mal <- rbinom(n = sample_size, size = pop_mal[l, y, a], prob = prob_mal)
       
       ##############################
       # Deal with impossible cases #
       ##############################
-      
       # Zero population
-      if (pop_fem[l, y, a] == 0) { tmp_deaths_fem <- pmin(0, tmp_deaths_fem) }
       if (pop_mal[l, y, a] == 0) { tmp_deaths_mal <- pmin(0, tmp_deaths_mal) }
-      
       # Number of deaths should be smaller or equal than the population 
-      tmp_deaths_fem <- pmin(pop_fem[l, y, a], tmp_deaths_fem)
       tmp_deaths_mal <- pmin(pop_mal[l, y, a], tmp_deaths_mal)
-    
       ##############################
-      
-      deaths_fem[y, a, ] <- tmp_deaths_fem
+    
       deaths_mal[y, a, ] <- tmp_deaths_mal
-      dth_rt_fem[y, a, ] <- prob_fem
       dth_rt_mal[y, a, ] <- prob_mal
     }
   }
@@ -167,7 +182,7 @@ for (l in 1:L) {
   tmp_dth_rt_fem_Q975 <- apply(X = dth_rt_fem, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_dth_rt_fem_mean) <- yys
-  colnames(tmp_dth_rt_fem_mean) <- aas
+  colnames(tmp_dth_rt_fem_mean) <- aas_fem
   tmp_dth_rt_fem_mean <- melt(tmp_dth_rt_fem_mean)
   tmp_dth_rt_fem_sd   <- melt(tmp_dth_rt_fem_sd  )[, 3]
   tmp_dth_rt_fem_medn <- melt(tmp_dth_rt_fem_medn)[, 3]
@@ -187,7 +202,7 @@ for (l in 1:L) {
   tmp_deaths_fem_Q975 <- apply(X = deaths_fem, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_deaths_fem_mean) <- yys
-  colnames(tmp_deaths_fem_mean) <- aas
+  colnames(tmp_deaths_fem_mean) <- aas_fem
   tmp_deaths_fem_mean <- melt(tmp_deaths_fem_mean)
   tmp_deaths_fem_sd   <- melt(tmp_deaths_fem_sd  )[, 3]
   tmp_deaths_fem_medn <- melt(tmp_deaths_fem_medn)[, 3]
@@ -211,7 +226,7 @@ for (l in 1:L) {
   tmp_dth_rt_mal_Q975 <- apply(X = dth_rt_mal, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_dth_rt_mal_mean) <- yys
-  colnames(tmp_dth_rt_mal_mean) <- aas
+  colnames(tmp_dth_rt_mal_mean) <- aas_mal
   tmp_dth_rt_mal_mean <- melt(tmp_dth_rt_mal_mean)
   tmp_dth_rt_mal_sd   <- melt(tmp_dth_rt_mal_sd  )[, 3]
   tmp_dth_rt_mal_medn <- melt(tmp_dth_rt_mal_medn)[, 3]
@@ -231,7 +246,7 @@ for (l in 1:L) {
   tmp_deaths_mal_Q975 <- apply(X = deaths_mal, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_deaths_mal_mean) <- yys
-  colnames(tmp_deaths_mal_mean) <- aas
+  colnames(tmp_deaths_mal_mean) <- aas_mal
   tmp_deaths_mal_mean <- melt(tmp_deaths_mal_mean)
   tmp_deaths_mal_sd   <- melt(tmp_deaths_mal_sd  )[, 3]
   tmp_deaths_mal_medn <- melt(tmp_deaths_mal_medn)[, 3]

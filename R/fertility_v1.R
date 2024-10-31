@@ -46,7 +46,7 @@ summary(fitted_lm)
 ##############################
 
 stan_directory <- "STAN/"
-p <- "fertility_v1_2.stan"
+p <- "fertility_v1_5.stan"
 m <- cmdstan_model(paste(stan_directory, p, sep = ""))
 
 # Construct `data_list`
@@ -96,4 +96,9 @@ fitted_model$save_object(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_f
 d <- fitted_model$draws(variables = NULL, inc_warmup = FALSE, format = "draws_matrix")
 saveRDS(object = list(data = data_list, draws = d), file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
 
-if (TRUE) { mcmc_trace(d, pars = c("alpha_0[1]", "fertility_rate_baseline[1]", "inv_log_fertility_rate_nat[1,1,1]", "std_fertility_rate_nat[1]")) }
+if (TRUE) { mcmc_trace(d, pars = c("alpha_0[1]", 
+                                   "phi_dispe_fem[1,1]", 
+                                   "inv_log_fertility_rate_nat[2,1,1]", 
+                                   "std_fertility_rate_nat[21]",
+                                   "gp_sigma_mal[1]", 
+                                   "gp_length_scale_mal[1]")) }

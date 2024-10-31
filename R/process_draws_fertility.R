@@ -3,26 +3,30 @@ source("R/aux.R")
 
 pop <- readRDS(file = "DATA/fertility_bias_data.RDS")
 geo_info <- pop$geo_info
-pop <- pop$fert
-pop %>% filter(is.infinite(fertility_rate))
-# Population per gender (L x Y x A)
+pop <- pop$fert 
+pop <- pop %>% filter(!(gender == "Female" & age %in% c("50-54", "55-59")))
+
+
+# Population per gender (L x Y x A_fem) and  (L x Y x A_mal)
 pop_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, population) %>% acast(mun ~ year ~ age, value.var = "population")
 pop_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, population) %>% acast(mun ~ year ~ age, value.var = "population")
 lls <- pop$mun %>% unique() %>% as.character() %>% as.numeric()
-aas <- pop$age %>% unique() 
+aas_fem <- pop[pop$gender == "Female", ]$age %>% unique()
+aas_mal <- pop[pop$gender ==   "Male", ]$age %>% unique() 
 yys <- pop$year %>% unique()
 # Births per gender (L x Y x A)
 brt_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, births) %>% acast(mun ~ year ~ age, value.var = "births")
 brt_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, births) %>% acast(mun ~ year ~ age, value.var = "births")
 
-p <- "fertility_v1_2.stan"
+p <- "fertility_v2_2.stan"
 d <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
 
 data  <- d$data
 draws <- d$draws
 
 Y = data$Y
-A = data$A
+A_fem = data$A_fem
+A_mal = data$A_mal
 G = data$G
 L = data$L
 C = data$C
@@ -32,11 +36,14 @@ sample_size <- nrow(draws[, 1])
 # Compute standardized death rate based on the raw data, so we can use it as a denominator for the multiplier 
 
 # Aggregated population based on the census year (i.e., 2018)
-pop_2018     <- pop %>% filter(year == 2018) %>% dplyr::select(mun, gender, age, population)
-pop_2018     <- pop_2018 %>% mutate(population = ifelse(population == 0, 1, population)) 
-pop_2018_mat <- acast(pop_2018, mun ~ gender ~ age, value.var = "population") # (L X G x A)
-p_nat        <- pop_2018 %>% group_by(gender, age) %>% summarise(p_nat = sum(population)) %>% ungroup()
-p_nat_mat    <- acast(p_nat, gender ~ age, value.var = "p_nat") # (G x A)
+pop_2018      <- pop %>% filter(year == 2018) %>% dplyr::select(mun, gender, age, population)
+pop_2018      <- pop_2018 %>% mutate(population = ifelse(population == 0, 1, population)) 
+pop_2018_mat_fem <- acast(pop_2018[pop_2018$gender == "Female", ], mun ~ age, value.var = "population") # (L x A_fem)
+pop_2018_mat_mal <- acast(pop_2018[pop_2018$gender ==   "Male", ], mun ~ age, value.var = "population") # (L x A_mal)
+p_nat         <- pop_2018 %>% group_by(gender, age) %>% summarise(p_nat = sum(population)) %>% ungroup()
+p_nat_mat_fem <- unname(unlist(c(p_nat[p_nat$gender == "Female", "p_nat"]))) # (A_fem)
+p_nat_mat_mal <- unname(unlist(c(p_nat[p_nat$gender ==   "Male", "p_nat"]))) # (A_mal)
+
 p_nat_total  <- sum(pop_2018$population)
 
 std_fertility_rate <- pop %>% dplyr::select(mun, year, age, gender, births, population, fertility_rate)
@@ -97,58 +104,66 @@ if (!file.exists(multiplier_file)) {
 # COMPUTE LOG-FERTILITY-RATE (COUNT) - ALL GENDERS 
 ##################################################
 
-pop_mun_sum <- unname(apply(X = pop_2018_mat, MARGIN = 1, FUN = sum))
-
 tmp_births <- list()
 tmp_bth_rt <- list()
 
 for (l in 1:L) {
   print(paste(sprintf("%04d", l), " (of ", L, ")", sep = ""))
   
-  log_fertility_rate_fem <- array(data = 0, dim = c(Y, A, sample_size)) 
-  log_fertility_rate_mal <- array(data = 0, dim = c(Y, A, sample_size))
-  births_fem <-  array(data = 0, dim = c(Y, A, sample_size))
-  births_mal <-  array(data = 0, dim = c(Y, A, sample_size))
-  bth_rt_fem <-  array(data = 0, dim = c(Y, A, sample_size))
-  bth_rt_mal <-  array(data = 0, dim = c(Y, A, sample_size))
+  log_fertility_rate_fem <- array(data = 0, dim = c(Y, A_fem, sample_size)) 
+  log_fertility_rate_mal <- array(data = 0, dim = c(Y, A_mal, sample_size))
+  births_fem <-  array(data = 0, dim = c(Y, A_fem, sample_size))
+  births_mal <-  array(data = 0, dim = c(Y, A_mal, sample_size))
+  bth_rt_fem <-  array(data = 0, dim = c(Y, A_fem, sample_size))
+  bth_rt_mal <-  array(data = 0, dim = c(Y, A_mal, sample_size))
   
   for (y in 1:Y) {
-    for (a in 1:A) {
-      # Only if Negative Binomial
-      tmp_phi_dispe <- c(draws[, "phi_dispe"])
+    for (a in 1:A_fem) {
+      tmp_phi_dispe_fem <- c(draws[, paste("phi_dispe[1]", sep = "")])
       
       # Fitted national rates
-      tmp_fertility_rate_nat_fem <- c(draws[, paste("inv_log_fertility_rate_nat[1,", y, ",", a, "]", sep = "")]) # Assuming Poisson or Negative Binomial for National count (otherwise, `logit_`)
-      tmp_fertility_rate_nat_mal <- c(draws[, paste("inv_log_fertility_rate_nat[2,", y, ",", a, "]", sep = "")])
+      tmp_fertility_rate_nat_fem <- c(draws[, paste("fertility_rate_nat_fem[", y, ",", a, "]", sep = "")]) 
       
-      log_fertility_rate_fem[y, a, ] <- log(multiplier[l, y, ]) + tmp_fertility_rate_nat_fem # Apply `log(inv_logit(x))` for the second term, if Binomial
-      log_fertility_rate_mal[y, a, ] <- log(multiplier[l, y, ]) + tmp_fertility_rate_nat_mal
+      log_fertility_rate_fem[y, a, ] <- log(multiplier[l, y, ]) + log(tmp_fertility_rate_nat_fem)
       
-      tmp_births_fem <- rnbinom(n = sample_size, size = tmp_phi_dispe, mu = exp(log_fertility_rate_fem[y, a, ] + log(pop_fem[l, y, a])))
-      tmp_births_mal <- rnbinom(n = sample_size, size = tmp_phi_dispe, mu = exp(log_fertility_rate_mal[y, a, ] + log(pop_mal[l, y, a])))
+      tmp_births_fem <- rnbinom(n = sample_size, size = tmp_phi_dispe_fem, mu = exp(log_fertility_rate_fem[y, a, ] + log(pop_fem[l, y, a])))
       
       ##############################
       # Deal with impossible cases #
       ##############################
+      if (pop_fem[l, y, a] == 0) { tmp_births_fem <- pmin(0, tmp_births_fem) } # Zero population
+      ##############################
+    
+      births_fem[y, a, ] <- tmp_births_fem
+      bth_rt_fem[y, a, ] <- exp(log_fertility_rate_fem[y, a, ])
+    }
+    
+    for (a in 1:A_mal) {
+      tmp_phi_dispe_mal <- c(draws[, paste("phi_dispe[2]", sep = "")])
       
-      # Zero population
-      if (pop_fem[l, y, a] == 0) { tmp_births_fem <- pmin(0, tmp_births_fem) }
-      if (pop_mal[l, y, a] == 0) { tmp_births_mal <- pmin(0, tmp_births_mal) }
+      # Fitted national rates
+      tmp_fertility_rate_nat_mal <- c(draws[, paste("fertility_rate_nat_mal[", y, ",", a, "]", sep = "")]) 
+      
+      log_fertility_rate_mal[y, a, ] <- log(multiplier[l, y, ]) + log(tmp_fertility_rate_nat_mal)
+      
+      tmp_births_mal <- rnbinom(n = sample_size, size = tmp_phi_dispe_mal, mu = exp(log_fertility_rate_mal[y, a, ] + log(pop_mal[l, y, a])))
       
       ##############################
+      # Deal with impossible cases #
+      ##############################
+      if (pop_mal[l, y, a] == 0) { tmp_births_mal <- pmin(0, tmp_births_mal) } # Zero population
+      ##############################
       
-      births_fem[y, a, ] <- tmp_births_fem
       births_mal[y, a, ] <- tmp_births_mal
-      bth_rt_fem[y, a, ] <- exp(log_fertility_rate_fem[y, a, ])
       bth_rt_mal[y, a, ] <- exp(log_fertility_rate_mal[y, a, ])
     }
   }
   
-  saveRDS(object = list(fertility_rate_fem = exp(log_fertility_rate_fem), 
-                        fertility_rate_mal = exp(log_fertility_rate_mal), 
+  saveRDS(object = list(fertility_rate_fem = exp(log_fertility_rate_fem),
+                        fertility_rate_mal = exp(log_fertility_rate_mal),
                         births_fem = births_fem,
                         births_mal = births_mal), file = paste("FITTED/DATA/FERTILITY/list_", lls[l], ".RDS", sep = ""))
-  
+
   # Compute summary statistics
   
   ##############################
@@ -164,7 +179,7 @@ for (l in 1:L) {
   tmp_bth_rt_fem_Q975 <- apply(X = bth_rt_fem, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_bth_rt_fem_mean) <- yys
-  colnames(tmp_bth_rt_fem_mean) <- aas
+  colnames(tmp_bth_rt_fem_mean) <- aas_fem
   tmp_bth_rt_fem_mean <- melt(tmp_bth_rt_fem_mean)
   tmp_bth_rt_fem_sd   <- melt(tmp_bth_rt_fem_sd  )[, 3]
   tmp_bth_rt_fem_medn <- melt(tmp_bth_rt_fem_medn)[, 3]
@@ -184,7 +199,7 @@ for (l in 1:L) {
   tmp_births_fem_Q975 <- apply(X = births_fem, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_births_fem_mean) <- yys
-  colnames(tmp_births_fem_mean) <- aas
+  colnames(tmp_births_fem_mean) <- aas_fem
   tmp_births_fem_mean <- melt(tmp_births_fem_mean)
   tmp_births_fem_sd   <- melt(tmp_births_fem_sd  )[, 3]
   tmp_births_fem_medn <- melt(tmp_births_fem_medn)[, 3]
@@ -208,7 +223,7 @@ for (l in 1:L) {
   tmp_bth_rt_mal_Q975 <- apply(X = bth_rt_mal, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_bth_rt_mal_mean) <- yys
-  colnames(tmp_bth_rt_mal_mean) <- aas
+  colnames(tmp_bth_rt_mal_mean) <- aas_mal
   tmp_bth_rt_mal_mean <- melt(tmp_bth_rt_mal_mean)
   tmp_bth_rt_mal_sd   <- melt(tmp_bth_rt_mal_sd  )[, 3]
   tmp_bth_rt_mal_medn <- melt(tmp_bth_rt_mal_medn)[, 3]
@@ -228,7 +243,7 @@ for (l in 1:L) {
   tmp_births_mal_Q975 <- apply(X = births_mal, MARGIN = c(1, 2), FUN = quantile, probs = 0.975)
   
   rownames(tmp_births_mal_mean) <- yys
-  colnames(tmp_births_mal_mean) <- aas
+  colnames(tmp_births_mal_mean) <- aas_mal
   tmp_births_mal_mean <- melt(tmp_births_mal_mean)
   tmp_births_mal_sd   <- melt(tmp_births_mal_sd  )[, 3]
   tmp_births_mal_medn <- melt(tmp_births_mal_medn)[, 3]

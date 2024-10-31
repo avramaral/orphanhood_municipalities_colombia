@@ -3,6 +3,9 @@ source("R/aux.R")
 source("R/header_plotting.R")
 
 data <- readRDS(file = "DATA/mortality_bias_data.RDS")
+data$mort <- data$mort %>% filter(!(gender == "Female" & age %in% c("60-64", "65-69", "70-74", "75-79", "80+")))
+data$mort <- data$mort %>% filter(!(gender ==   "Male" & age %in% c(                  "70-74", "75-79", "80+")))
+
 mpi_info <- data$mort %>% dplyr::select(mun, mpi) %>% distinct()
 geo_info <- data$geo_info 
 colombia <- data$colombia
@@ -10,18 +13,20 @@ colombia <- data$colombia
 prop_65_66_fem <- readRDS(file = "DATA/prop_65_66_fem.RDS")
 prop_75_76_mal <- readRDS(file = "DATA/prop_75_76_mal.RDS")
 
-Y = data$mort$year   %>% unique() %>% length()
-A = data$mort$age    %>% unique() %>% length()
-G = data$mort$gender %>% unique() %>% length()
-L = data$mort$mun    %>% unique() %>% length()
+Y <- data$mort$year   %>% unique() %>% length()
+G <- data$mort$gender %>% unique() %>% length()
+L <- data$mort$mun    %>% unique() %>% length()
 
 raw_deaths <- data$mort
 raw_deaths_filtered <- adj_mort_data(mort = raw_deaths, prop_fem = prop_65_66_fem, prop_75_76_mal)
 
-p <- "mortality_v1_1.stan"
+p <- "mortality_v2_1.stan"
 d <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
 draws <- d$draws
 fit_d <- d$data
+A_fem <- d$data$A_fem
+A_mal <- d$data$A_mal
+sample_size <- nrow(draws[, 1]) # 2000
 
 fit_deaths <- readRDS(paste("FITTED/DATA/count_", strsplit(p, "\\.")[[1]][1], ".RDS", sep = ""))
 fit_deaths <- fit_deaths %>% as_tibble() %>% rename(mun = Location, gender = Gender, year = Year, age = Age, deaths = Median) %>% mutate(mun = factor(mun))
@@ -92,6 +97,132 @@ for (y in 1998:2021) {
   (p_tot_pts <- p_raw_pts + p_fit_pts)
   ggsave(filename = paste("IMAGES/STD_RATES_COMPARISON/MORTALITY/std_mortality_comparison_", y ,".jpeg" , sep = ""), plot = p_tot_pts , width = 3000, height = 1500, units = c("px"), dpi = 300, bg = "white")
 }
+
+# FITTED VS EMPIRICAL
+  
+raw_deaths_y <- data_raw
+raw_deaths_y <- raw_deaths_y %>% group_by(year, gender, age) %>% summarise(deaths = sum(deaths), population = sum(population)) %>% ungroup() %>% mutate(age = factor(age), death_rate = compute_rate(count = deaths, pop = population))
+raw_deaths_y <- raw_deaths_y %>% filter(!(gender == "Female" & age %in% c("60-64", "65-69", "70-74", "75-79", "80+")))
+raw_deaths_y <- raw_deaths_y %>% filter(!(gender == "Male" & age %in% c("70-74", "75-79", "80+")))
+raw_deaths_y <- raw_deaths_y %>% mutate(year = factor(year), gender = factor(gender))
+
+fit_deaths_y <- readRDS(paste("FITTED/DATA/count_", strsplit(p, "\\.")[[1]][1], ".RDS", sep = "")) %>% as_tibble() %>% rename(mun = Location, gender = Gender, year = Year, age = Age, Q500 = Median) %>% dplyr::select(year, mun, gender, age, Q025, Q500, Q975) %>% mutate(mun = factor(mun)) %>% left_join(y = data$mort[, c("mun", "gender", "year", "age", "population")], by = c("mun", "gender", "year", "age"))
+fit_deaths_y <- fit_deaths_y %>% group_by(year, gender, age) %>% summarise(Q025 = sum(Q025), Q500 = sum(Q500), Q975 = sum(Q975), population = sum(population)) %>% ungroup() %>% mutate(age = factor(age), death_rate_Q025 = compute_rate(count = Q025, pop = population), death_rate_Q500 = compute_rate(count = Q500, pop = population), death_rate_Q975 = compute_rate(count = Q975, pop = population))
+fit_deaths_y <- fit_deaths_y %>% filter(!(gender == "Female" & age %in% c("60-64", "65-69", "70-74", "75-79", "80+")))
+fit_deaths_y <- fit_deaths_y %>% filter(!(gender == "Male" & age %in% c("70-74", "75-79", "80+")))
+fit_deaths_y <- fit_deaths_y %>% mutate(year = factor(year), gender = factor(gender))
+
+fit_deaths_y_nat <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))$draws
+fit_deaths_y_nat_fem <- array(data = 0, dim = c(Y, A_fem, sample_size))
+fit_deaths_y_nat_mal <- array(data = 0, dim = c(Y, A_mal, sample_size)) 
+for (y in 1:Y) {
+  for (a in 1:A_fem) { fit_deaths_y_nat_fem[y, a, ] <- inv_logit(c(fit_deaths_y_nat[, paste("inv_logit_death_rate_nat_fem[", y, ",", a, "]", sep = "")])) }
+  for (a in 1:A_mal) { fit_deaths_y_nat_mal[y, a, ] <- inv_logit(c(fit_deaths_y_nat[, paste("inv_logit_death_rate_nat_mal[", y, ",", a, "]", sep = "")])) }
+}
+fit_deaths_y_nat_fem_Q025 <- apply(X = fit_deaths_y_nat_fem, MARGIN = c(1, 2), FUN = quantile, probs = 0.025); rownames(fit_deaths_y_nat_fem_Q025) <- unique(raw_deaths_y$year); colnames(fit_deaths_y_nat_fem_Q025) <- unique(filter(raw_deaths_y, gender == "Female")$age); fit_deaths_y_nat_fem_Q025 <- melt(fit_deaths_y_nat_fem_Q025)
+fit_deaths_y_nat_fem_Q500 <- apply(X = fit_deaths_y_nat_fem, MARGIN = c(1, 2), FUN = quantile, probs = 0.500); rownames(fit_deaths_y_nat_fem_Q500) <- unique(raw_deaths_y$year); colnames(fit_deaths_y_nat_fem_Q500) <- unique(filter(raw_deaths_y, gender == "Female")$age); fit_deaths_y_nat_fem_Q500 <- melt(fit_deaths_y_nat_fem_Q500)
+fit_deaths_y_nat_fem_Q975 <- apply(X = fit_deaths_y_nat_fem, MARGIN = c(1, 2), FUN = quantile, probs = 0.975); rownames(fit_deaths_y_nat_fem_Q975) <- unique(raw_deaths_y$year); colnames(fit_deaths_y_nat_fem_Q975) <- unique(filter(raw_deaths_y, gender == "Female")$age); fit_deaths_y_nat_fem_Q975 <- melt(fit_deaths_y_nat_fem_Q975)
+fit_deaths_y_nat_fem <- cbind(fit_deaths_y_nat_fem_Q025, fit_deaths_y_nat_fem_Q500[, 3], fit_deaths_y_nat_fem_Q975[, 3]); colnames(fit_deaths_y_nat_fem) <- c("year", "age", "death_rate_Q025", "death_rate_Q500", "death_rate_Q975"); fit_deaths_y_nat_fem <- fit_deaths_y_nat_fem %>% as_tibble()
+fit_deaths_y_nat_fem <- fit_deaths_y_nat_fem %>% mutate(gender = "Female")
+fit_deaths_y_nat_mal_Q025 <- apply(X = fit_deaths_y_nat_mal, MARGIN = c(1, 2), FUN = quantile, probs = 0.025); rownames(fit_deaths_y_nat_mal_Q025) <- unique(raw_deaths_y$year); colnames(fit_deaths_y_nat_mal_Q025) <- unique(filter(raw_deaths_y, gender ==   "Male")$age); fit_deaths_y_nat_mal_Q025 <- melt(fit_deaths_y_nat_mal_Q025)
+fit_deaths_y_nat_mal_Q500 <- apply(X = fit_deaths_y_nat_mal, MARGIN = c(1, 2), FUN = quantile, probs = 0.500); rownames(fit_deaths_y_nat_mal_Q500) <- unique(raw_deaths_y$year); colnames(fit_deaths_y_nat_mal_Q500) <- unique(filter(raw_deaths_y, gender ==   "Male")$age); fit_deaths_y_nat_mal_Q500 <- melt(fit_deaths_y_nat_mal_Q500)
+fit_deaths_y_nat_mal_Q975 <- apply(X = fit_deaths_y_nat_mal, MARGIN = c(1, 2), FUN = quantile, probs = 0.975); rownames(fit_deaths_y_nat_mal_Q975) <- unique(raw_deaths_y$year); colnames(fit_deaths_y_nat_mal_Q975) <- unique(filter(raw_deaths_y, gender ==   "Male")$age); fit_deaths_y_nat_mal_Q975 <- melt(fit_deaths_y_nat_mal_Q975)
+fit_deaths_y_nat_mal <- cbind(fit_deaths_y_nat_mal_Q025, fit_deaths_y_nat_mal_Q500[, 3], fit_deaths_y_nat_mal_Q975[, 3]); colnames(fit_deaths_y_nat_mal) <- c("year", "age", "death_rate_Q025", "death_rate_Q500", "death_rate_Q975"); fit_deaths_y_nat_mal <- fit_deaths_y_nat_mal %>% as_tibble()
+fit_deaths_y_nat_mal <- fit_deaths_y_nat_mal %>% mutate(gender =   "Male")
+fit_deaths_y_nat <- rbind(fit_deaths_y_nat_fem, fit_deaths_y_nat_mal) %>% dplyr::select(year, gender, age, death_rate_Q025, death_rate_Q500, death_rate_Q975) %>% arrange(year, gender, age) %>% mutate(year = factor(year), gender = factor(gender))
+
+my_colors <- plot3D::jet.col(n = length(unique(raw_deaths_y$year)))
+
+dr_plot_1 <- ggplot(data = raw_deaths_y) +
+  geom_line(mapping = aes(x = age, y = death_rate, color = year, group = year), linetype = "solid") +
+  geom_point(mapping = aes(x = age, y = death_rate, color = year), size = 2) +
+  geom_errorbar(data = fit_deaths_y_nat, aes(x = age, ymin = death_rate_Q025, ymax = death_rate_Q975, color = year)) +
+  scale_color_manual(name = "Year", values = my_colors) +
+  facet_grid(~ gender) +
+  labs(title = paste("National fertility rate", sep = ""), x = "Age", y = "Fertility rate") +
+  theme_bw() +
+  theme(legend.position = "bottom", text = element_text(size = 12, family = "LM Roman 10"), axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) 
+
+dr_plot_1.5 <- ggplot(data = raw_deaths_y) +
+  geom_line(mapping = aes(x = age, y = death_rate, color = year, group = year), linetype = "solid") +
+  geom_point(data = fit_deaths_y_nat, aes(x = age, y = death_rate_Q500, color = year)) +
+  scale_color_manual(name = "Year", values = my_colors) +
+  facet_grid(~ gender) +
+  labs(title = paste("National fertility rate", sep = ""), x = "Age", y = "Fertility rate") +
+  theme_bw() +
+  theme(legend.position = "bottom", text = element_text(size = 12, family = "LM Roman 10"), axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) 
+
+dr_plot_2 <- ggplot(data = raw_deaths_y) +
+  geom_line(mapping = aes(x = age, y = death_rate, color = gender, group = gender), linetype = "solid") +
+  geom_point(mapping = aes(x = age, y = death_rate, color = gender), size = 2) +
+  geom_errorbar(data = fit_deaths_y_nat, aes(x = age, ymin = death_rate_Q025, ymax = death_rate_Q975, color = gender)) +
+  scale_color_manual(name = "Gender", values = c("#00008FFF", "#800000FF")) +
+  facet_wrap(~ year, ncol = 4) +
+  labs(title = paste("National fertility rate", sep = ""), x = "Age", y = "Fertility rate") +
+  theme_bw() +
+  theme(legend.position = "bottom", text = element_text(size = 12, family = "LM Roman 10"), axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) 
+
+dr_plot_2.5_fem <- ggplot(data = filter(raw_deaths_y, gender == "Female")) +
+  geom_line(mapping = aes(x = age, y = death_rate, color = gender, group = gender), linetype = "solid") +
+  geom_point(data = filter(fit_deaths_y_nat, gender == "Female"), aes(x = age, y = death_rate_Q500, color = gender)) +
+  scale_color_manual(name = "Gender", values = c("#00008FFF")) +
+  facet_wrap(~ year, ncol = 4) +
+  labs(title = paste("National fertility rate", sep = ""), x = "Age", y = "Fertility rate") +
+  theme_bw() +
+  theme(legend.position = "bottom", text = element_text(size = 12, family = "LM Roman 10"), axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) 
+
+dr_plot_2.5_mal <- ggplot(data = filter(raw_deaths_y, gender == "Male")) +
+  geom_line(mapping = aes(x = age, y = death_rate, color = gender, group = gender), linetype = "solid") +
+  geom_point(data = filter(fit_deaths_y_nat, gender == "Male"), aes(x = age, y = death_rate_Q500, color = gender)) +
+  scale_color_manual(name = "Gender", values = c("#800000FF")) +
+  facet_wrap(~ year, ncol = 4) +
+  labs(title = paste("National fertility rate", sep = ""), x = "Age", y = "Fertility rate") +
+  theme_bw() +
+  theme(legend.position = "bottom", text = element_text(size = 12, family = "LM Roman 10"), axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) 
+
+ggsave(filename = paste("IMAGES/RATE_COMPARISON/MORTALITY/mort_coloured_year_error_bar.jpeg",   sep = ""), plot = dr_plot_1,       width = 1500, height = 1800, units = c("px"), dpi = 300, bg = "white")
+ggsave(filename = paste("IMAGES/RATE_COMPARISON/MORTALITY/mort_coloured_year_median.jpeg",      sep = ""), plot = dr_plot_1.5,     width = 1500, height = 1800, units = c("px"), dpi = 300, bg = "white")
+ggsave(filename = paste("IMAGES/RATE_COMPARISON/MORTALITY/mort_coloured_gender_error_bar.jpeg", sep = ""), plot = dr_plot_2,       width = 1500, height = 1800, units = c("px"), dpi = 300, bg = "white")
+ggsave(filename = paste("IMAGES/RATE_COMPARISON/MORTALITY/mort_coloured_female_error_bar.jpeg", sep = ""), plot = dr_plot_2.5_fem, width = 1500, height = 1800, units = c("px"), dpi = 300, bg = "white")
+ggsave(filename = paste("IMAGES/RATE_COMPARISON/MORTALITY/mort_coloured_male_error_bar.jpeg",   sep = ""), plot = dr_plot_2.5_mal, width = 1500, height = 1800, units = c("px"), dpi = 300, bg = "white")
+
+# for (y in 1998:2021) {
+#   # y  <- 2021
+#   yy <- y - 1998 + 1
+#   y_lim <- c(0, 0.15)
+#   
+#   raw_deaths_y <- data_raw %>% filter(year == y)
+#   raw_deaths_y <- raw_deaths_y %>% group_by(year, gender, age) %>% summarise(deaths = sum(deaths), population = sum(population)) %>% ungroup() %>% mutate(age = factor(age), death_rate = compute_rate(count = deaths, pop = population))
+#   raw_deaths_y <- raw_deaths_y %>% filter(!(gender == "Female" & age %in% c("60-64", "65-69", "70-74", "75-79", "80+")))
+#   raw_deaths_y <- raw_deaths_y %>% filter(!(gender == "Male" & age %in% c("70-74", "75-79", "80+")))
+#   
+#   fit_deaths_y <- readRDS(paste("FITTED/DATA/count_", strsplit(p, "\\.")[[1]][1], ".RDS", sep = "")) %>% as_tibble() %>% filter(Year == y) %>% rename(mun = Location, gender = Gender, year = Year, age = Age, Q500 = Median) %>% dplyr::select(year, mun, gender, age, Q025, Q500, Q975) %>% mutate(mun = factor(mun)) %>% left_join(y = data$mort[, c("mun", "gender", "year", "age", "population")], by = c("mun", "gender", "year", "age"))
+#   fit_deaths_y <- fit_deaths_y %>% group_by(year, gender, age) %>% summarise(Q025 = sum(Q025), Q500 = sum(Q500), Q975 = sum(Q975), population = sum(population)) %>% ungroup() %>% mutate(age = factor(age), death_rate_Q025 = compute_rate(count = Q025, pop = population), death_rate_Q500 = compute_rate(count = Q500, pop = population), death_rate_Q975 = compute_rate(count = Q975, pop = population))
+#   fit_deaths_y <- fit_deaths_y %>% filter(!(gender == "Female" & age %in% c("60-64", "65-69", "70-74", "75-79", "80+")))
+#   fit_deaths_y <- fit_deaths_y %>% filter(!(gender == "Male" & age %in% c("70-74", "75-79", "80+")))
+#   
+#   dr_plot <- ggplot(data = raw_deaths_y) +
+#     geom_line(mapping = aes(x = age, y = death_rate, group = 1), color = "red", linetype = "dashed") +
+#     geom_point(mapping = aes(x = age, y = death_rate), color = "red", size = 2) +
+#     geom_errorbar(data = fit_deaths_y, aes(x = age, ymin = death_rate_Q025, ymax = death_rate_Q975), color = "blue") +
+#     geom_point(data = fit_deaths_y, mapping = aes(x = age, y = death_rate_Q500), color = "blue", size = 2) +
+#     facet_grid(~ gender) +
+#     labs(title = paste("National death rate in ", y, sep = ""), x = "Age", y = "Death rate") +
+#     theme_bw() +
+#     theme(legend.position = "bottom", text = element_text(size = 12, family = "LM Roman 10"), axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) 
+#   
+#   ct_plot <- ggplot(data = raw_deaths_y) +
+#     geom_line(mapping = aes(x = age, y = deaths, group = 1), color = "red", linetype = "dashed") +
+#     geom_point(mapping = aes(x = age, y = deaths), color = "red", size = 2) +
+#     geom_errorbar(data = fit_deaths_y, aes(x = age, ymin = Q025, ymax = Q975), color = "blue") +
+#     geom_point(data = fit_deaths_y, mapping = aes(x = age, y = Q500), color = "blue", size = 2) +
+#     facet_grid(~ gender) +
+#     labs(title = paste("National death count in ", y, sep = ""), x = "Age", y = "Death count") +
+#     theme_bw() +
+#     theme(legend.position = "bottom", text = element_text(size = 12, family = "LM Roman 10"), axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) 
+#   
+#   ggsave(filename = paste("IMAGES/COUNT_COMPARISON/FERTILITY/fertility_comparison_", y ,".jpeg" , sep = ""), plot = ct_plot , width = 1500, height = 1200, units = c("px"), dpi = 300, bg = "white")
+# }
 
 
 # BOXPLOT
