@@ -4,8 +4,6 @@ source("R/aux.R")
 pop <- readRDS(file = "DATA/mortality_bias_data.RDS")
 geo_info <- pop$geo_info
 pop <- pop$mort
-pop <- pop %>% filter(!(gender == "Female" & age %in% c("60-64", "65-69", "70-74", "75-79", "80+")))
-pop <- pop %>% filter(!(gender ==   "Male" & age %in% c(                  "70-74", "75-79", "80+")))
 
 # Population per gender (L x Y x A_fem) and  (L x Y x A_mal)
 pop_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, population) %>% acast(mun ~ year ~ age, value.var = "population")
@@ -18,7 +16,7 @@ yys <- pop$year %>% unique()
 dth_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, deaths) %>% acast(mun ~ year ~ age, value.var = "deaths")
 dth_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, deaths) %>% acast(mun ~ year ~ age, value.var = "deaths")
 
-p <- "mortality_v2_1.stan"
+p <- "mortality_v1.stan"
 d <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
 
 data  <- d$data

@@ -4,8 +4,6 @@ source("R/aux.R")
 pop <- readRDS(file = "DATA/fertility_bias_data.RDS")
 geo_info <- pop$geo_info
 pop <- pop$fert 
-pop <- pop %>% filter(!(gender == "Female" & age %in% c("50-54", "55-59")))
-
 
 # Population per gender (L x Y x A_fem) and  (L x Y x A_mal)
 pop_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, population) %>% acast(mun ~ year ~ age, value.var = "population")
@@ -18,18 +16,18 @@ yys <- pop$year %>% unique()
 brt_fem <- pop %>% filter(gender == "Female") %>% dplyr::select(mun, year, age, births) %>% acast(mun ~ year ~ age, value.var = "births")
 brt_mal <- pop %>% filter(gender ==   "Male") %>% dplyr::select(mun, year, age, births) %>% acast(mun ~ year ~ age, value.var = "births")
 
-p <- "fertility_v2_2.stan"
+p <- "fertility_v1.stan"
 d <- readRDS(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
 
 data  <- d$data
 draws <- d$draws
 
-Y = data$Y
-A_fem = data$A_fem
-A_mal = data$A_mal
-G = data$G
-L = data$L
-C = data$C
+Y <- data$Y
+A_fem <- data$A_fem
+A_mal <- data$A_mal
+G <- data$G
+L <- data$L
+C <- data$C
 mpi_municip <- data$mpi_municip
 sample_size <- nrow(draws[, 1])
 
