@@ -6,7 +6,6 @@ source("R/aux.R")
 data <- readRDS(file = "DATA/fertility_bias_data.RDS")
 
 fert      <- data$fert 
-data$fert <- fert
 geo_info  <- data$geo_info
 colombia  <- data$colombia
 
@@ -94,7 +93,7 @@ fitted_model <- m$sample(data = data_list,
                          seed = 1,             # Set seed for reproducibility
                          chains = 4,           # Number of Markov chains
                          parallel_chains = 4,  # Number of parallel chains
-                         iter_warmup = 8000,   # Number of warm up iterations
+                         iter_warmup = 18000,  # Number of warm up iterations
                          iter_sampling = 2000, # Number of sampling iterations
                          thin = 4)             # Thinning (period between saved samples) to save memory
 
@@ -104,3 +103,7 @@ fitted_model$save_object(file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_f
 
 d <- fitted_model$draws(variables = NULL, inc_warmup = FALSE, format = "draws_matrix")
 saveRDS(object = list(data = data_list, draws = d), file = paste("FITTED/", strsplit(p, "\\.")[[1]][1], "_dat.RDS", sep = ""))
+
+if (TRUE) { mcmc_trace(d, pars = c("alpha_0[1]", "fertility_rate_fem[1]", "inv_log_fertility_rate_nat_fem[1,1]", "std_fertility_rate_nat[1]",
+                                   "gp_sigma_fem", "gp_sigma_mal", "gp_length_scale_fem", "gp_length_scale_mal")) }
+

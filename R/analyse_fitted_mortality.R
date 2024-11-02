@@ -23,11 +23,19 @@ A_mal <- d$data$A_mal
 sample_size <- nrow(draws[, 1]) # 2000
 
 fit_deaths <- readRDS(paste("FITTED/DATA/count_", strsplit(p, "\\.")[[1]][1], ".RDS", sep = ""))
-fit_deaths <- fit_deaths %>% as_tibble() %>% rename(mun = Location, gender = Gender, year = Year, age = Age, deaths = Median) %>% mutate(mun = factor(mun))
+fit_deaths <- fit_deaths %>% as_tibble() %>% rename(mun = Location, gender = Gender, year = Year, age = Age, deaths = Mean) %>% mutate(mun = factor(mun))
 fit_deaths <- fit_deaths %>% left_join(y = data$mort[, c("mun", "gender", "year", "age", "population")], by = c("mun", "gender", "year", "age"))
 fit_deaths <- fit_deaths %>% mutate(death_rate = compute_rate(count = deaths, pop = population))
 fit_deaths <- fit_deaths %>% dplyr::select(year, mun, gender, age, deaths, population, death_rate) %>% arrange(year, mun, gender, age)
 fit_deaths <- fit_deaths %>% rename(fit_deaths = deaths)
+
+##### NOT USED #####
+fit_dth_rt <- readRDS(paste("FITTED/DATA/rates_", strsplit(p, "\\.")[[1]][1], ".RDS", sep = ""))
+fit_dth_rt <- fit_dth_rt %>% as_tibble() %>% rename(mun = Location, gender = Gender, year = Year, age = Age, death_rate = Mean) %>% mutate(mun = factor(mun))
+fit_dth_rt <- fit_dth_rt %>% dplyr::select(mun, gender, year, age, death_rate) %>% left_join(y = raw_deaths[, c("mun", "gender", "year", "age", "population")], by = c("mun", "gender", "year", "age"))
+fit_dth_rt <- fit_dth_rt %>% mutate(deaths = population * death_rate) %>% dplyr::select(year, mun, gender, age, deaths, population, death_rate) %>% arrange(year, mun, gender, age)
+#fit_deaths <- fit_dth_rt
+####################
 
 n_raw_deaths <- sum(raw_deaths$deaths)
 n_fit_deaths <- sum(fit_deaths$fit_deaths)

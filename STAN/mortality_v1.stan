@@ -75,15 +75,15 @@ model {
   
   // Priors (National level)
   target += normal_lpdf(death_rate_fem | 0, 3);
-  target += normal_lpdf(death_rate_mal | 0, 1);
+  target += normal_lpdf(death_rate_mal | 0, 3);
   
   target += normal_lpdf(to_vector(z_fem) | 0, 1);
   target += normal_lpdf(to_vector(z_mal) | 0, 1);
   
-  target += normal_lpdf(gp_sigma_fem | 0, 1);
-  target += normal_lpdf(gp_sigma_mal | 0, 1);
-  target += inv_gamma_lpdf(gp_length_scale_fem | 5, 1);
-  target += inv_gamma_lpdf(gp_length_scale_mal | 5, 1);
+  target += normal_lpdf(gp_sigma_fem | 0, 3);
+  target += normal_lpdf(gp_sigma_mal | 0, 3);
+  target += inv_gamma_lpdf(gp_length_scale_fem | 2.5, 1);
+  target += inv_gamma_lpdf(gp_length_scale_mal | 2.5, 1);
 
   // Likelihood (Municipality level)
   target += normal_lpdf(to_vector(std_death_rate_capital) | to_vector(std_death_rate_capital_mean), std_death_rate_capital_sigma);

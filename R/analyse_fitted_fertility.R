@@ -23,7 +23,7 @@ A_mal <- d$data$A_mal
 sample_size <- nrow(draws[, 1]) # 2000
 
 fit_births <- readRDS(paste("FITTED/DATA/count_", strsplit(p, "\\.")[[1]][1], ".RDS", sep = ""))
-fit_births <- fit_births %>% as_tibble() %>% rename(mun = Location, gender = Gender, year = Year, age = Age, births = Median) %>% mutate(mun = factor(mun))
+fit_births <- fit_births %>% as_tibble() %>% rename(mun = Location, gender = Gender, year = Year, age = Age, births = Mean) %>% mutate(mun = factor(mun))
 fit_births <- fit_births %>% left_join(y = data$fert[, c("mun", "gender", "year", "age", "population")], by = c("mun", "gender", "year", "age"))
 fit_births <- fit_births %>% mutate(fertility_rate = compute_rate(count = births, pop = population))
 fit_births <- fit_births %>% dplyr::select(year, mun, gender, age, births, population, fertility_rate) %>% arrange(year, mun, gender, age)

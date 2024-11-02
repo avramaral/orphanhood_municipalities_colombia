@@ -123,7 +123,7 @@ for (l in 1:L) {
       log_death_rate_fem[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_fem))
       prob_fem <- pmin(exp(log_death_rate_fem[y, a, ]), 1)
       
-      tmp_deaths_fem <- rbinom(n = sample_size, size = pop_fem[l, y, a], prob = prob_fem)
+      tmp_deaths_fem <- rbinom(n = sample_size, size = round(pop_fem[l, y, a]), prob = prob_fem)
       
       ##############################
       # Deal with impossible cases #
@@ -144,7 +144,7 @@ for (l in 1:L) {
       log_death_rate_mal[y, a, ] <- log(multiplier[l, y, ]) + log(inv_logit(tmp_death_rate_nat_mal))
       prob_mal <- pmin(exp(log_death_rate_mal[y, a, ]), 1)
       
-      tmp_deaths_mal <- rbinom(n = sample_size, size = pop_mal[l, y, a], prob = prob_mal)
+      tmp_deaths_mal <- rbinom(n = sample_size, size = round(pop_mal[l, y, a]), prob = prob_mal)
       
       ##############################
       # Deal with impossible cases #
