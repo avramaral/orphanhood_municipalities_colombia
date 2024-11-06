@@ -176,7 +176,7 @@ for (y in 1998:2021) {
 
   if (y == 2018) {
     p_raw_pts <- plot_std_rate(data = std_raw, tt = "Mortality", y_lim = c(0, 0.015))
-    ggsave(filename = paste("REPORT/images/std_mortality_comparison_raw.jpeg" , sep = ""), plot = p_raw_pts , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
+    ggsave(filename = paste("docs/images/std_mortality_comparison_raw.jpeg" , sep = ""), plot = p_raw_pts , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
   }
 }
 
@@ -206,6 +206,6 @@ p_tot <- p_raw + p_fit
 ggsave(filename = paste("IMAGES/STD_RATES_COMPARISON/MORTALITY/std_mortality_comparison_map.jpeg" , sep = ""), plot = p_tot , width = 3000, height = 1500, units = c("px"), dpi = 300, bg = "white")
 
 p_raw_tmp <- plot_maps(data = std_raw, my_var = "std_rate", tt = "", nm_var = "Std. mortality\nrate (in 2018)", ll = c(min(std_raw$std_rate), max(std_raw$std_rate)))
-ggsave(filename = paste("REPORT/images/std_mortality_comparison_map_raw.jpeg" , sep = ""), plot = p_raw_tmp , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
+ggsave(filename = paste("docs/images/std_mortality_comparison_map_raw.jpeg" , sep = ""), plot = p_raw_tmp , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
 
 

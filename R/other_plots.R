@@ -17,4 +17,4 @@ mpi_info <- mpi_info %>% filter(!(mun %in% c(88001, 88564)))
 
 
 p_raw_tmp <- plot_maps(data = mpi_info, my_var = "mpi", tt = "", nm_var = "MPI", ll = c(0, 100))
-ggsave(filename = paste("REPORT/images/MPI.jpeg" , sep = ""), plot = p_raw_tmp , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
+ggsave(filename = paste("docs/images/MPI.jpeg" , sep = ""), plot = p_raw_tmp , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")

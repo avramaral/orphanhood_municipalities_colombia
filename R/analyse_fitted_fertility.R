@@ -168,7 +168,7 @@ for (y in 1998:2021) {
 
   if (y == 2018) {
     p_raw_pts <- plot_std_rate(data = std_raw, tt = "Fertility", y_lim = c(0, 0.15))
-    ggsave(filename = paste("REPORT/images/std_fertility_comparison_raw.jpeg" , sep = ""), plot = p_raw_pts , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
+    ggsave(filename = paste("docs/images/std_fertility_comparison_raw.jpeg" , sep = ""), plot = p_raw_pts , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
   }  
 }
 
@@ -198,6 +198,6 @@ p_tot <- p_raw + p_fit
 ggsave(filename = paste("IMAGES/std_fertility_comparison.jpeg" , sep = ""), plot = p_tot , width = 3000, height = 1500, units = c("px"), dpi = 300, bg = "white")
 
 p_raw_tmp <- plot_maps(data = std_raw, my_var = "std_rate", tt = "", nm_var = "Std. fertility\nrate (2018)", ll = c(min(std_raw$std_rate), max(std_raw$std_rate)))
-ggsave(filename = paste("REPORT/images/std_fertility_comparison_map_raw.jpeg" , sep = ""), plot = p_raw_tmp , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
+ggsave(filename = paste("docs/images/std_fertility_comparison_map_raw.jpeg" , sep = ""), plot = p_raw_tmp , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
 
 

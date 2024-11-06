@@ -22,7 +22,7 @@ Colombia can still be divided into 1121 municipalities (this classification vari
 
 Mortality and Fertility counts are expected to be underreported in the next most deprived municipalities. In particular, we will use the Multidimensional Poverty Index (MPI) as a way to measure the deprivation levels across the country.
 
-![](images/mpi.jpeg){height="300"}
+![](images/MPI.jpeg){height="300"}
 
 For instance, let us start by analyzing the standardized mortality and fertility rates in all locations (in 2018).
 
