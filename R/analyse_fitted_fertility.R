@@ -165,29 +165,39 @@ for (y in 1998:2021) {
   
   (p_tot_pts <- p_raw_pts + p_fit_pts)
   ggsave(filename = paste("IMAGES/STD_RATES_COMPARISON/FERTILITY/std_fertility_comparison_", y ,".jpeg" , sep = ""), plot = p_tot_pts , width = 3000, height = 1500, units = c("px"), dpi = 300, bg = "white")
+
+  if (y == 2018) {
+    p_raw_pts <- plot_std_rate(data = std_raw, tt = "Fertility", y_lim = c(0, 0.15))
+    ggsave(filename = paste("REPORT/images/std_fertility_comparison_raw.jpeg" , sep = ""), plot = p_raw_pts , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
+  }  
 }
 
-# # MAP
-# 
-# std_raw <- compute_std_rate(data_raw); std_raw <- std_raw %>% filter(year == 2018) %>% dplyr::select(-year)
-# std_fit <- compute_std_rate(data_fit); std_fit <- std_fit %>% filter(year == 2018) %>% dplyr::select(-year)
-# 
-# u_limit <- max(std_raw$std_rate, std_fit$std_rate)
-# l_limit <- min(std_raw$std_rate, std_fit$std_rate)
-# 
-# std_raw <- std_raw %>% left_join(y = colombia, by = "mun")
-# std_fit <- std_fit %>% left_join(y = colombia, by = "mun")
-# 
-# # Filter out islands
-# isl1_rw <- std_raw %>% filter((mun %in% c(88001))) 
-# isl2_rw <- std_raw %>% filter((mun %in% c(88564))) 
-# std_raw <- std_raw %>% filter(!(mun %in% c(88001, 88564)))
-# 
-# isl1_ft <- std_fit %>% filter((mun %in% c(88001))) 
-# isl2_ft <- std_fit %>% filter((mun %in% c(88564))) 
-# std_fit <- std_fit %>% filter(!(mun %in% c(88001, 88564)))
-# 
-# p_raw <- plot_maps(data = std_raw, my_var = "std_rate", tt = "Original data", nm_var = "Standardised\nfertility rate\n(in 2018)", ll = c(l_limit, u_limit))
-# p_fit <- plot_maps(data = std_fit, my_var = "std_rate", tt = "Fitted data",   nm_var = "Standardised\nfertility rate\n(in 2018)", ll = c(l_limit, u_limit))
-# p_tot <- p_raw + p_fit
-# ggsave(filename = paste("IMAGES/std_fertility_comparison.jpeg" , sep = ""), plot = p_tot , width = 3000, height = 1500, units = c("px"), dpi = 300, bg = "white")
+# MAP
+
+std_raw <- compute_std_rate(data_raw); std_raw <- std_raw %>% filter(year == 2018) %>% dplyr::select(-year)
+std_fit <- compute_std_rate(data_fit); std_fit <- std_fit %>% filter(year == 2018) %>% dplyr::select(-year)
+
+u_limit <- max(std_raw$std_rate, std_fit$std_rate)
+l_limit <- min(std_raw$std_rate, std_fit$std_rate)
+
+std_raw <- std_raw %>% left_join(y = colombia, by = "mun")
+std_fit <- std_fit %>% left_join(y = colombia, by = "mun")
+
+# Filter out islands
+isl1_rw <- std_raw %>% filter((mun %in% c(88001)))
+isl2_rw <- std_raw %>% filter((mun %in% c(88564)))
+std_raw <- std_raw %>% filter(!(mun %in% c(88001, 88564)))
+
+isl1_ft <- std_fit %>% filter((mun %in% c(88001)))
+isl2_ft <- std_fit %>% filter((mun %in% c(88564)))
+std_fit <- std_fit %>% filter(!(mun %in% c(88001, 88564)))
+
+p_raw <- plot_maps(data = std_raw, my_var = "std_rate", tt = "Original data", nm_var = "Standardised\nfertility rate\n(2018)", ll = c(l_limit, u_limit))
+p_fit <- plot_maps(data = std_fit, my_var = "std_rate", tt = "Fitted data",   nm_var = "Standardised\nfertility rate\n(2018)", ll = c(l_limit, u_limit))
+p_tot <- p_raw + p_fit
+ggsave(filename = paste("IMAGES/std_fertility_comparison.jpeg" , sep = ""), plot = p_tot , width = 3000, height = 1500, units = c("px"), dpi = 300, bg = "white")
+
+p_raw_tmp <- plot_maps(data = std_raw, my_var = "std_rate", tt = "", nm_var = "Std. fertility\nrate (2018)", ll = c(min(std_raw$std_rate), max(std_raw$std_rate)))
+ggsave(filename = paste("REPORT/images/std_fertility_comparison_map_raw.jpeg" , sep = ""), plot = p_raw_tmp , width = 1500, height = 1500, units = c("px"), dpi = 300, bg = "white")
+
+

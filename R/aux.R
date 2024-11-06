@@ -140,9 +140,9 @@ plot_maps <- function (data, my_var, nm_var = "", tt = "", ll = NULL, my_colors 
     labs(title = tt) + 
     theme_bw() +
     theme(legend.position = "right", 
-          text = element_text(size = 14, family = "LM Roman 10"), 
-          plot.title = element_text(size = 16),
-          legend.title = element_text(size = 12),
+          text = element_text(size = 12, family = "LM Roman 10"), 
+          plot.title = element_text(size = 14),
+          legend.title = element_text(size = 10),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),

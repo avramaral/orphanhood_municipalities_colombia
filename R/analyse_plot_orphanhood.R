@@ -52,8 +52,8 @@ inc_poor <- inc_orphans_mun %>% filter(mun == ordered_mpi[length(ordered_mpi)]) 
 inc_rich <- inc_orphans_mun %>% filter(mun == ordered_mpi[1])                   %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
 print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
 # 10 most deprived versus 10 least deprived
-inc_poor <- inc_orphans_mun %>% filter(mun %in% tail(ordered_mpi, 100)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-inc_rich <- inc_orphans_mun %>% filter(mun %in% head(ordered_mpi, 100)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+inc_poor <- inc_orphans_mun %>% filter(mun %in% tail(ordered_mpi, 10)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+inc_rich <- inc_orphans_mun %>% filter(mun %in% head(ordered_mpi, 10)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
 print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
 # 10%
 pps <- inc_orphans_mun$mpi %>% quantile(probs = c(0.1, 0.9))
