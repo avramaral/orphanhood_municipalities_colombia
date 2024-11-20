@@ -6,7 +6,7 @@ source("R/aux_orphanhood.R")
 ### FLAGS ###
 #############
 
-file_name <- "_MEAN"
+file_name <- "_EMP"
 
 geo_info <- readRDS(file = "DATA/geo_info.RDS")
 
@@ -33,33 +33,57 @@ inc_orphans_per_children <- inc_orphans_per_children %>% filter(year == 2021)
 inc_orphans_per_children <- inc_orphans_per_children$n_orp %>% sum()
 print(paste("Orphanhood incidence (per children) in Colombia in 2021: ", round(inc_orphans_per_children / 100000 * 100, 2), "%", sep = ""))
 
-# Analysis by MPI
-mpi_threshold <- 40.8
-population_21 <- population %>% filter(year == 2021) %>% dplyr::select(-year)
-population_21 <- population_21 %>% group_by(loc, gender) %>% summarise(n_children = sum(population)) %>% ungroup() %>% rename(mun = loc)
-inc_orphans_mun <- read_csv(file = paste("ORPHANHOOD/POSTPROCESSING/TABLES/municipality_inc_orphans_abs", file_name, ".csv", sep = ""))
-inc_orphans_mun <- inc_orphans_mun %>% filter(year == 2021)
-inc_orphans_mun <- inc_orphans_mun %>% mutate(mun = factor(mun)) 
-inc_orphans_mun <- inc_orphans_mun %>% left_join(y = geo_info[, c("mun", "mpi")], by = "mun")
-inc_orphans_mun <- inc_orphans_mun %>% left_join(y = population_21, by = c("mun", "gender"))
-inc_orphans_mun <- inc_orphans_mun %>% mutate(orphan_per_children = n_orp / n_children)
-inc_poor <- inc_orphans_mun %>% filter(mpi >  mpi_threshold) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-inc_rich <- inc_orphans_mun %>% filter(mpi <= mpi_threshold) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
-# Poorest versus richest
-ordered_mpi <- inc_orphans_mun %>% arrange(mpi) %>% dplyr::select(mun) %>% c() %>% unlist() %>% unname(); 
-inc_poor <- inc_orphans_mun %>% filter(mun == ordered_mpi[length(ordered_mpi)]) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-inc_rich <- inc_orphans_mun %>% filter(mun == ordered_mpi[1])                   %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
-# 10 most deprived versus 10 least deprived
-inc_poor <- inc_orphans_mun %>% filter(mun %in% tail(ordered_mpi, 10)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-inc_rich <- inc_orphans_mun %>% filter(mun %in% head(ordered_mpi, 10)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
-# 10%
-pps <- inc_orphans_mun$mpi %>% quantile(probs = c(0.1, 0.9))
-inc_poor <- inc_orphans_mun %>% filter(mpi >= pps[2]) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-inc_rich <- inc_orphans_mun %>% filter(mpi <= pps[1]) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
-print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
+###################
+# Analysis by MPI #
+###################
+
+total_pop <- readRDS(file = "DATA/population_all.RDS")
+total_pop_21 <- total_pop %>% filter(year == 2021) %>% group_by(mun) %>% summarise(total_pop_21 = sum(population)) %>% ungroup()
+
+# Relative
+inc_orphans_per_children <- read_csv(file = paste("ORPHANHOOD/POSTPROCESSING/TABLES/municipality_inc_orphans_per_1000", file_name, ".csv", sep = ""))
+# Absolute
+inc_orphans <- read_csv(file = paste("ORPHANHOOD/POSTPROCESSING/TABLES/municipality_inc_orphans_abs", file_name, ".csv", sep = ""))
+
+orphans <- inc_orphans
+
+orphans <- orphans %>% mutate(mun = factor(mun)) %>% filter(year == 2021)
+orphans <- orphans %>% left_join(y = geo_info[, c("mun", "mpi")], by = "mun")
+orphans <- orphans %>% group_by(mun, mun_name, year, mpi) %>% summarise(n_orp = sum(n_orp)) %>% ungroup()
+orphans <- orphans %>% left_join(total_pop_21, by = "mun")
+orphans <- orphans %>% arrange(desc(mpi))
+
+###################
+###################
+
+
+
+# mpi_threshold <- 40.8
+# population_21 <- population %>% filter(year == 2021) %>% dplyr::select(-year)
+# population_21 <- population_21 %>% group_by(loc, gender) %>% summarise(n_children = sum(population)) %>% ungroup() %>% rename(mun = loc)
+# inc_orphans_mun <- read_csv(file = paste("ORPHANHOOD/POSTPROCESSING/TABLES/municipality_inc_orphans_abs", file_name, ".csv", sep = ""))
+# inc_orphans_mun <- inc_orphans_mun %>% filter(year == 2021)
+# inc_orphans_mun <- inc_orphans_mun %>% mutate(mun = factor(mun))
+# inc_orphans_mun <- inc_orphans_mun %>% left_join(y = geo_info[, c("mun", "mpi")], by = "mun")
+# inc_orphans_mun <- inc_orphans_mun %>% left_join(y = population_21, by = c("mun", "gender"))
+# inc_orphans_mun <- inc_orphans_mun %>% mutate(orphan_per_children = n_orp / n_children)
+# inc_poor <- inc_orphans_mun %>% filter(mpi >  mpi_threshold) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# inc_rich <- inc_orphans_mun %>% filter(mpi <= mpi_threshold) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
+# # Poorest versus richest
+# ordered_mpi <- inc_orphans_mun %>% arrange(mpi) %>% dplyr::select(mun) %>% c() %>% unlist() %>% unname();
+# inc_poor <- inc_orphans_mun %>% filter(mun == ordered_mpi[length(ordered_mpi)]) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# inc_rich <- inc_orphans_mun %>% filter(mun == ordered_mpi[1])                   %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
+# # 10 most deprived versus 10 least deprived
+# inc_poor <- inc_orphans_mun %>% filter(mun %in% tail(ordered_mpi, 10)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# inc_rich <- inc_orphans_mun %>% filter(mun %in% head(ordered_mpi, 10)) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
+# # 10%
+# pps <- inc_orphans_mun$mpi %>% quantile(probs = c(0.1, 0.9))
+# inc_poor <- inc_orphans_mun %>% filter(mpi >= pps[2]) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# inc_rich <- inc_orphans_mun %>% filter(mpi <= pps[1]) %>% dplyr::select(orphan_per_children) %>% c() %>% unlist() %>% mean()
+# print(paste("x% in Colombia in 2021 (median): ", round((1 - (inc_rich / inc_poor)) * 100, 2), "%", sep = ""))
 
 
 # PREVALENCE (at national level)
