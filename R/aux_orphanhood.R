@@ -1623,11 +1623,21 @@ process_nb_orphans_table_dep_national_year <- function (yy, type.input, death_co
   dor <- vector('list', length(unique(locs)))
   dor.age <- vector('list', length(unique(locs)))
   
+  # TODO olli temporary for checking see 91430 Amazonas La Victoria area 1443 sqkm (dark blue)
+  # 91460 Mirití - Paraná  16564sqkm (light blue)
   for (l in locs) {
     
     # Process the orphans by age of adults
     i <- i + 1
     tmp <- d_deaths[loc == l]
+    # TODO 
+    # olli note
+    # 
+    # for 2021, Mirití - Paraná there is only one death in Female 50-66 and all else is zero
+    # inappropriate rounding could be the key issue at this stage
+    # 
+    # total male pop > 20 yrs is 475, so expect something like 2.85 deaths here
+    
     # If due to suppression issue, the subset table contains no data, then we skip that
     if (nrow(tmp) > 0) {
       group <- paste0("col", "_", gsub(' ', '-', yy), "_", gsub(' ', '-', l))
@@ -1687,6 +1697,14 @@ process_orphans_dep_national <- function (d_merge, group, ...) {
   d_children <- as.data.table(d_children)
   d_m1 <- merge(d_merge, d_children, by = c('age', 'gender'), all.x = T)
   d_m1 <- as.data.table(d_m1)
+  
+  # TODO
+  # please remove all rounding throughout
+  # my clear steer here is that we NEVER round 
+  # until plotting or producing tables
+  # eg for the national tables takes real valued numbers and write to file using sprintf
+  # https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf
+  
   d_m1[, orphans := round(deaths * nb_c)]
   d_m1$age <- factor(d_m1$age, levels = c("10-14", "15-19", "20-24", "25-29", "30-34", "35-39" ,"40-44", "45-49", "50-54", "50-66", "55-59", "60-76"))
   # d_m1[!is.na(d_m1$age), ]

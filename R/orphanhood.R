@@ -14,6 +14,34 @@ per_n_children <- ifelse(type.input == "Municipality", 1000, 100000)
 
 yys <- seq(ifelse(compute_prevalence, 2004, 2015), 2021)
 
+# TODO
+# can you please provide a README similar to 
+# https://github.com/MLGlobalHealth/bayes-rate-consistency
+# and move the github to https://github.com/MLGlobalHealth
+
+# TODO
+# can you please provide an installation script for all dependencies
+# in a vanilla environment, see eg
+# https://github.com/MLGlobalHealth/bayes-rate-consistency
+
+# TODO  
+# typically we have the following workflow:
+# 1/ we have the code in a personal code directory on the HPC/cloud say git/orphanhood_code
+# 2/ we spawn a local compute instance with directory say /rds/jobs/tmp/tmp12345
+# 3/ we copy all input files needed to /rds/jobs/tmp/tmp12345 in one go at the start from a personal directory say or105/projects/orphanhood_with_fertility_correction_241117
+#   this is because doing many read calls to a location outside the local compute instance is super inefficient
+#   
+# 3b/ we may also copy code to the local compute instance, but in general this may not be so
+#   
+# 4/ we generate all output files in subdirs of /rds/jobs/tmp/tmp12345 
+#   this is because doing many write calls to a location outside the local compute instance is super inefficient
+# 5/ we copy & zip the outputs from the local compute instance to the personal directory say or105/projects/orphanhood_with_fertility_correction_241117
+# 
+# can you please update the code so that a workflow using HPC or cloud is supported
+# I think best to use 'here' and assume this is set to a vanilla local compute instance eg /rds/jobs/tmp/tmp12345
+# https://cran.r-project.org/web/packages/here/vignettes/here.html
+# then change this script slightly so that code is sourced from a different directory, which can be a git directory somewhere completely different
+
 path_mortality <- "DATA/COUNTS/mort_emp.RDS"
 path_fertility <- "DATA/COUNTS/fert_emp.RDS"
 
@@ -30,6 +58,7 @@ if (per1K) {
   fertility_rates <- fertility_rates %>% mutate(fertility_rate = fertility_rate * 1000)
 }
 
+# TODO please change so the adjusted deaths remain real-valued, they should not be rounded
 death_count <- mortality_rates %>% dplyr::select(year, loc, gender, age, deaths)
 
 # Used to compute the total number of children, i.e., 0-17
@@ -89,11 +118,28 @@ if (compute_prevalence) {
 for (yy in yys) {
   print(paste("Year: ", yy, " (until ", yys[length(yys)], ")", sep = ""))
 
+  # TODO 
+  # is there a particular reason why this is written to csv?
+  # 
+  # will be faster if we just return the male fertility rates that we
+  # need for this particular year yy
+  # and similar for females, rather than do IO to a csv
+  
+  # TODO
+  # it would also be useful if we could explicitly specify the age cutoff in the script, rather 
+  # than have it hard coded please
+  
+  # TODO
+  # I would not be surprised if this can be coded >10x more efficiently by avoiding so many separate R commands and separate R indexing 
   print("Processing number of children.")
   process_number_children_year(yy = yy, type.input = type.input, fertility_rates = fertility_rates, per1K = per1K)
 
   # Process number of orphans.
   print("Processing number of orphans.")
+  # TODO 
+  # this code failed for me without creating the assumed directory structure, please fix
+  # this code should not read in from csv and all inputs should be specified
+  # if you use data.table, then these won t be duplicated inside the downstream function
   process_nb_orphans_table_dep_national_year(yy = yy, type.input = type.input, death_count = death_count)
 
   print(paste("Done for year ", yy, ".", sep = ""))
