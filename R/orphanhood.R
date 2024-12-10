@@ -42,8 +42,8 @@ yys <- seq(ifelse(compute_prevalence, 2004, 2015), 2021)
 # https://cran.r-project.org/web/packages/here/vignettes/here.html
 # then change this script slightly so that code is sourced from a different directory, which can be a git directory somewhere completely different
 
-path_mortality <- "DATA/COUNTS/mort_emp.RDS"
-path_fertility <- "DATA/COUNTS/fert_emp.RDS"
+path_mortality <- "DATA/COUNTS/mort_mean.RDS"
+path_fertility <- "DATA/COUNTS/fert_mean.RDS"
 
 #################
 ### READ DATA ###
@@ -58,7 +58,8 @@ if (per1K) {
   fertility_rates <- fertility_rates %>% mutate(fertility_rate = fertility_rate * 1000)
 }
 
-# TODO please change so the adjusted deaths remain real-valued, they should not be rounded
+# Oliver: please, change it so the adjusted deaths remain real-valued, they should not be rounded
+# André: these counts are realizations of a Binomial, therefore, integers (so are the birth counts)
 death_count <- mortality_rates %>% dplyr::select(year, loc, gender, age, deaths)
 
 # Used to compute the total number of children, i.e., 0-17
@@ -109,7 +110,7 @@ if (compute_prevalence) {
   
   death_count     <- mortality_rates %>% dplyr::select(year, loc, gender, age, deaths)
   
-} else { print("At municipality level, we are not computing prevalence.") }
+} else { print("At municipality level, we are not computing prevalence. This is *not* an error.") }
 
 ######################
 # COMPUTE ORPHANHOOD #

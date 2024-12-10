@@ -1623,20 +1623,11 @@ process_nb_orphans_table_dep_national_year <- function (yy, type.input, death_co
   dor <- vector('list', length(unique(locs)))
   dor.age <- vector('list', length(unique(locs)))
   
-  # TODO olli temporary for checking see 91430 Amazonas La Victoria area 1443 sqkm (dark blue)
-  # 91460 Mirití - Paraná  16564sqkm (light blue)
   for (l in locs) {
     
     # Process the orphans by age of adults
     i <- i + 1
     tmp <- d_deaths[loc == l]
-    # TODO 
-    # olli note
-    # 
-    # for 2021, Mirití - Paraná there is only one death in Female 50-66 and all else is zero
-    # inappropriate rounding could be the key issue at this stage
-    # 
-    # total male pop > 20 yrs is 475, so expect something like 2.85 deaths here
     
     # If due to suppression issue, the subset table contains no data, then we skip that
     if (nrow(tmp) > 0) {
@@ -1697,26 +1688,20 @@ process_orphans_dep_national <- function (d_merge, group, ...) {
   d_children <- as.data.table(d_children)
   d_m1 <- merge(d_merge, d_children, by = c('age', 'gender'), all.x = T)
   d_m1 <- as.data.table(d_m1)
-  
-  # TODO
-  # please remove all rounding throughout
-  # my clear steer here is that we NEVER round 
-  # until plotting or producing tables
-  # eg for the national tables takes real valued numbers and write to file using sprintf
-  # https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf
-  
-  d_m1[, orphans := round(deaths * nb_c)]
+
+  # No rounding
+  # d_m1[, orphans := round(deaths * nb_c)]
+  d_m1[, orphans := deaths * nb_c]
   d_m1$age <- factor(d_m1$age, levels = c("10-14", "15-19", "20-24", "25-29", "30-34", "35-39" ,"40-44", "45-49", "50-54", "50-66", "55-59", "60-76"))
-  # d_m1[!is.na(d_m1$age), ]
   write_csv(x = d_m1, file = paste("ORPHANHOOD/RESULTS/", toupper(type.input), "/parents_deaths_orphans_", group, ".csv", sep = ""))
   
   d_summary <- d_m1 %>% select(age, gender, loc, deaths, orphans)
   d_summary$age <- as.character(d_summary$age)
-  # Merge to age groups for each state
-  # d_summary$age <- ifelse(d_summary$age %in% c("15-19", "20-24", "25-29"), '15-29', ifelse(d_summary$age %in% c("30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64"), '30-64', ifelse(d_summary$age %in% c('0-14'), '0-14', '65+')))
   
   d_summary <- as.data.table(d_summary)
-  d_summary <- d_summary[, list(deaths = round(sum(deaths, na.rm = TRUE)), nb_orphans = round(sum(orphans, na.rm = TRUE))), by = c('loc', 'age', 'gender')]
+  # No rounding
+  # d_summary <- d_summary[, list(deaths = round(sum(deaths, na.rm = TRUE)), nb_orphans = round(sum(orphans, na.rm = TRUE))), by = c('loc', 'age', 'gender')]
+  d_summary <- d_summary[, list(deaths = (sum(deaths, na.rm = TRUE)), nb_orphans = (sum(orphans, na.rm = TRUE))), by = c('loc', 'age', 'gender')]
   
   list(d_summary = d_summary, d_age = d_m1)
 }
@@ -1755,7 +1740,9 @@ process_orphans_with_age <- function(d_merge, group, ...) {
   d_children <- as.data.table(d_children)
   d_m1 <- merge(d_merge, d_children, by = c('age', 'gender'), all.x = T, allow.cartesian = T)
   d_m1 <- as.data.table(d_m1)
-  d_m1[, orphans := round(deaths * nb_c)]
+  # No rounding
+  # d_m1[, orphans := round(deaths * nb_c)]
+  d_m1[, orphans := (deaths * nb_c)]
   d_m1$age <- factor(d_m1$age, levels = c("10-14", "15-19", "20-24", "25-29", "30-34", "35-39" ,"40-44", "45-49", "50-54", "50-66", "55-59", "60-76"))
   
   d_summary <- d_m1 %>% select(age, gender, child_age, loc, deaths, orphans)
@@ -1764,7 +1751,9 @@ process_orphans_with_age <- function(d_merge, group, ...) {
   # d_summary$age <- ifelse(d_summary$age %in% c("15-19", "20-24", "25-29"), '15-29', ifelse(d_summary$age %in% c("30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64"), '30-64', ifelse(d_summary$age %in% c('0-14'), '0-14', '65+')))
   setnames(d_summary, 'child_age', 'age.children')
   d_summary <- as.data.table(d_summary)
-  d_summary <- d_summary[, list(deaths = round(sum(deaths, na.rm = T)), nb_orphans = round(sum(orphans, na.rm = T))), by = c('loc', 'age', 'gender', 'age.children')]
+  # No rounding
+  # d_summary <- d_summary[, list(deaths = round(sum(deaths, na.rm = T)), nb_orphans = round(sum(orphans, na.rm = T))), by = c('loc', 'age', 'gender', 'age.children')]
+  d_summary <- d_summary[, list(deaths = (sum(deaths, na.rm = T)), nb_orphans = (sum(orphans, na.rm = T))), by = c('loc', 'age', 'gender', 'age.children')]
   
   list(d_summary = d_summary, d_age = d_m1)
 }
@@ -1812,7 +1801,9 @@ orphan_table <- function (type.input, population, prop_15_17, geo_info, per_n_ch
   tmp_population <- tmp_population %>% group_by(loc, year) %>% summarize(children = sum(population)) %>% ungroup()
   
   orphans_and_rate <- left_join(x = cp_orphans_locs_years, y = tmp_population, by = c("loc", "year"))
-  orphans_and_rate <- orphans_and_rate %>% mutate(orphan_rate = ceiling(orphans * per_n_children / children))
+  # No rounding
+  # orphans_and_rate <- orphans_and_rate %>% mutate(orphan_rate = ceiling(orphans * per_n_children / children))
+  orphans_and_rate <- orphans_and_rate %>% mutate(orphan_rate = (orphans * per_n_children / children))
   write_csv(x = orphans_and_rate, file = paste("ORPHANHOOD/SUMMARY/orphans_and_rate_by_year_", tmp_loc, "_list_per_", as.integer(per_n_children), file_name, ".csv", sep = ""))
   
   colnames(orphans_and_rate)[1] <- tmp_loc
@@ -1831,7 +1822,7 @@ orphan_table <- function (type.input, population, prop_15_17, geo_info, per_n_ch
 
 # INCIDENCE
 
-generate_incidence_table <- function (type.input, per_n_children, geo_info, should_round = TRUE, file_name = "", ...) {
+generate_incidence_table <- function (type.input, per_n_children, geo_info, should_round = FALSE, file_name = "", ...) {
   
   if (type.input == "Municipality") { tmp_loc <- "mun" } else if (type.input == "Department") { tmp_loc <- "dep" } else if (type.input == "Region") { tmp_loc <- "reg" } else if (type.input == "National") { tmp_loc <- "nat" } else { stop("Choose a valid `type.input`.") }
   
@@ -1918,9 +1909,9 @@ generate_incidence_table <- function (type.input, per_n_children, geo_info, shou
 
 # PREVALENCE
 
-generate_prevalence_table <- function (type.input, per_n_children, geo_info, should_round = TRUE, ...) {
+generate_prevalence_table <- function (type.input, per_n_children, geo_info, should_round = FALSE, ...) {
   
-  if (should_round) { decimal_places <- 0 } else { decimal_places <- 2 }
+  if (should_round) { decimal_places <- 0 } else { decimal_places <- 8 }
   
   if (type.input == "Municipality") { tmp_loc <- "mun" } else if (type.input == "Department") { tmp_loc <- "dep" } else if (type.input == "Region") { tmp_loc <- "reg" } else if (type.input == "National") { tmp_loc <- "nat" } else { stop("Choose a valid `type.input`.") }
   
@@ -1958,7 +1949,7 @@ generate_prevalence_table <- function (type.input, per_n_children, geo_info, sho
     j <- j + 1
     
     orphans_by_age <- read_csv(paste("ORPHANHOOD/RESULTS/", toupper(type.input), "/", type.input, "_parents_deaths_orphans_with_age_summary_", y, ".csv", sep = ""), col_types = cols())
-    # Due to rounding effects, the numbers in `department_parents_deaths_orphans_with_age_summary` are slightly different than the ones in `department_parents_deaths_orphans_summary`.
+    # Due to rounding effects, the numbers in `department_parents_deaths_orphans_with_age_summary` may be slightly different than the ones in `department_parents_deaths_orphans_summary`.
     orphans_by_age <- orphans_by_age %>% filter(child_age <= age_ch)
     locs <- orphans_by_age %>% select(loc) %>% unique() %>% c() %>% unlist() %>% unname()
     nb_orphs_fem[[j]]       <- nb_orphs_mal[[j]]       <- rep(0, length(locs))
@@ -1977,13 +1968,13 @@ generate_prevalence_table <- function (type.input, per_n_children, geo_info, sho
         y <- 2021
         tmp_population <- pop_all_years %>% filter(year == y, loc == l, age %in% c("0-9", "10-14", "15-19")) %>% select(population) %>% sum()
         if (g == "Female") {
-          nb_orphs_fem[[j]][i]       <- round(total_nb_orphs, 2)
-          nb_orphs_per_n_fem[[j]][i] <- round(total_nb_orphs / tmp_population * per_n_children, 2)
-          nb_children_pp_fem[[j]][i] <- round(tmp_population, 2)
+          nb_orphs_fem[[j]][i]       <- round(x = total_nb_orphs, digits = decimal_places)
+          nb_orphs_per_n_fem[[j]][i] <- round(x = total_nb_orphs / tmp_population * per_n_children, digits = decimal_places)
+          nb_children_pp_fem[[j]][i] <- round(x = tmp_population, digits = decimal_places)
         } else {
-          nb_orphs_mal[[j]][i]       <- round(total_nb_orphs, 2)
-          nb_orphs_per_n_mal[[j]][i] <- round(total_nb_orphs / tmp_population * per_n_children, 2)
-          nb_children_pp_mal[[j]][i] <- round(tmp_population, 2)
+          nb_orphs_mal[[j]][i]       <- round(x = total_nb_orphs, digits = decimal_places)
+          nb_orphs_per_n_mal[[j]][i] <- round(x = total_nb_orphs / tmp_population * per_n_children, digits = decimal_places)
+          nb_children_pp_mal[[j]][i] <- round(x = tmp_population, digits = decimal_places)
         }
       }
     }

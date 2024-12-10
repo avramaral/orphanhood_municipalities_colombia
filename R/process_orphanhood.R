@@ -6,10 +6,10 @@ source("R/aux_orphanhood.R")
 ### FLAGS ###
 #############
 
-file_name <- "_EMP"
+file_name <- "_MEAN"
 
 per1K <- TRUE
-type.input <- "National"
+type.input <- "National" # c("Municipality", "Department", "Region", "National")
 per_n_children <- ifelse(type.input == "Municipality", 1000, 100000)
 should_round <- FALSE
 

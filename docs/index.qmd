@@ -130,10 +130,10 @@ Lastly, the absolute and relative (% of children aged 0-17 years) orphanhood pre
 
 The summary of the orphanhood estimates **after correcting the mortality and fertility counts** are as follows
 
-- Orphanhood incidence in Colombia in 2021: 100,134.
+- Orphanhood incidence in Colombia in 2021: 100,653.72.
 - Orphanhood incidence (per children) in Colombia in 2021: 0.71%.
-- Orphanhood prevalence in Colombia in 2021: 623,218.
-- Orphanhood prevalence (per children) in Colombia in 2021: 4.42%.
+- Orphanhood prevalence in Colombia in 2021: 625,548.35.
+- Orphanhood prevalence (per children) in Colombia in 2021: 4.43%.
 
 The absolute and relative (% of children aged 0-17 years) orphanhood incidence in all municipalities (in 2021) are as follows 
 
